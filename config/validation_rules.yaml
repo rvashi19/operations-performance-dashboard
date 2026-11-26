@@ -1,0 +1,122 @@
+# Data quality rule definitions consumed by src/validation/framework.py.
+# check: name of the check function; params: check-specific parameters.
+# treatment: deduplicate | normalize | retain | quarantine | exclude_from_resolution_metrics | manual_review
+reference:
+  # Status values listed for this dataset (data dictionary + observed values). Used by DQ012.
+  documented_statuses: [Assigned, Cancel, Closed, Draft, Email Sent, In Progress, Open, Pending, Started, Unassigned, Unspecified]
+  closed_statuses: [Closed]
+  open_statuses: [Assigned, Draft, Email Sent, In Progress, Open, Pending, Started, Unassigned, Unspecified]
+rules:
+  - id: DQ001
+    name: Duplicate request ID
+    check: duplicate_key
+    column: unique_key
+    category: duplicate
+    severity: high
+    treatment: deduplicate
+    explanation: More than one differing version of the same unique_key was extracted (record changed between pages/runs).
+  - id: DQ002
+    name: Exact duplicate record
+    check: exact_duplicate
+    column: "*"
+    category: duplicate
+    severity: medium
+    treatment: deduplicate
+    explanation: Record is byte-identical to another extracted record.
+  - id: DQ003
+    name: Missing request ID
+    check: not_null
+    column: unique_key
+    category: completeness
+    severity: critical
+    treatment: quarantine
+    explanation: unique_key is the documented primary identifier; record cannot be tracked.
+  - id: DQ004
+    name: Missing created date
+    check: not_null
+    column: created_date
+    category: completeness
+    severity: critical
+    treatment: quarantine
+    explanation: created_date is required for every volume, backlog and duration metric.
+  - id: DQ005
+    name: Closed status without closed date
+    check: closed_requires_date
+    column: closed_date
+    category: consistency
+    severity: high
+    treatment: exclude_from_resolution_metrics
+    explanation: Status is Closed but closed_date is empty, so resolution time cannot be computed. Open requests without a closed date are NOT flagged.
+  - id: DQ006
+    name: Closed before created
+    check: closed_before_created
+    column: closed_date
+    category: validity
+    severity: high
+    treatment: exclude_from_resolution_metrics
+    explanation: closed_date precedes created_date, producing a negative duration.
+  - id: DQ007
+    name: Invalid timestamp
+    check: invalid_timestamp
+    columns: [created_date, closed_date, due_date, resolution_action_updated_date]
+    category: validity
+    severity: high
+    treatment: quarantine
+    explanation: Non-empty value that cannot be parsed as a timestamp.
+  - id: DQ008
+    name: Unexpected future timestamp
+    check: future_timestamp
+    columns: [created_date, closed_date, resolution_action_updated_date]
+    category: validity
+    severity: high
+    treatment: exclude_from_resolution_metrics
+    explanation: Timestamp is later than the extraction time. due_date is excluded because future deadlines are legitimate.
+  - id: DQ009
+    name: Missing complaint category
+    check: not_null
+    column: complaint_type
+    category: completeness
+    severity: medium
+    treatment: retain
+    explanation: Record kept and reported under 'Unknown' category.
+  - id: DQ010
+    name: Missing agency
+    check: not_null
+    column: agency
+    category: completeness
+    severity: medium
+    treatment: manual_review
+    explanation: Responsible agency unknown; record kept under 'UNKNOWN' and escalated.
+  - id: DQ011
+    name: Open status with closed date
+    check: open_with_closed_date
+    column: status
+    category: consistency
+    severity: medium
+    treatment: manual_review
+    explanation: Status indicates the request is unresolved but a closed_date is present (possible re-opened request). Counted as open; excluded from resolution metrics.
+  - id: DQ012
+    name: Undocumented status value
+    check: allowed_values
+    column: status
+    category: validity
+    severity: medium
+    treatment: manual_review
+    explanation: Status value not in the documented list.
+  - id: DQ013
+    name: Extreme resolution duration
+    check: extreme_duration
+    column: closed_date
+    params: {max_days: 365}
+    category: plausibility
+    severity: low
+    treatment: retain
+    explanation: Resolution took longer than the configured plausibility threshold; retained (can be genuine) but flagged.
+  - id: DQ014
+    name: Missing geography
+    check: missing_geography
+    columns: [incident_zip, latitude, longitude]
+    category: completeness
+    severity: low
+    treatment: retain
+    explanation: No ZIP code and no coordinates; record kept, shown as 'Unknown' in geographic breakdowns.

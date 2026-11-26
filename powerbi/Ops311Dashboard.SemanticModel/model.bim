@@ -1,0 +1,930 @@
+{
+  "compatibilityLevel": 1567,
+  "model": {
+    "culture": "en-US",
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "sourceQueryCulture": "en-US",
+    "dataAccessOptions": {
+      "legacyRedirects": true,
+      "returnErrorValuesAsNull": true
+    },
+    "expressions": [
+      {
+        "name": "ExportFolder",
+        "kind": "m",
+        "expression": "\"C:\\\\Users\\\\raviv\\\\OneDrive\\\\Desktop\\\\operational dashboard\\\\data\\\\exports\\\\\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+      }
+    ],
+    "tables": [
+      {
+        "name": "Requests",
+        "columns": [
+          {
+            "name": "unique_key",
+            "dataType": "string",
+            "sourceColumn": "unique_key",
+            "summarizeBy": "none",
+            "isHidden": true
+          },
+          {
+            "name": "status",
+            "dataType": "string",
+            "sourceColumn": "status",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "status_group",
+            "dataType": "string",
+            "sourceColumn": "status_group",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "created_at",
+            "dataType": "dateTime",
+            "sourceColumn": "created_at",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "closed_at",
+            "dataType": "dateTime",
+            "sourceColumn": "closed_at",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "effective_closed_at",
+            "dataType": "dateTime",
+            "sourceColumn": "effective_closed_at",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "created_date_key",
+            "dataType": "int64",
+            "sourceColumn": "created_date_key",
+            "summarizeBy": "none",
+            "isHidden": true
+          },
+          {
+            "name": "closed_date_key",
+            "dataType": "int64",
+            "sourceColumn": "closed_date_key",
+            "summarizeBy": "none",
+            "isHidden": true
+          },
+          {
+            "name": "channel",
+            "dataType": "string",
+            "sourceColumn": "channel",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "agency_code",
+            "dataType": "string",
+            "sourceColumn": "agency_code",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "complaint_type",
+            "dataType": "string",
+            "sourceColumn": "complaint_type",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "descriptor",
+            "dataType": "string",
+            "sourceColumn": "descriptor",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "incident_zip",
+            "dataType": "string",
+            "sourceColumn": "incident_zip",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "community_board",
+            "dataType": "string",
+            "sourceColumn": "community_board",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "resolution_hours",
+            "dataType": "double",
+            "sourceColumn": "resolution_hours",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "resolution_days",
+            "dataType": "double",
+            "sourceColumn": "resolution_days",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "include_in_resolution_metrics",
+            "dataType": "boolean",
+            "sourceColumn": "include_in_resolution_metrics",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "within_analytical_target",
+            "dataType": "boolean",
+            "sourceColumn": "within_analytical_target",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "dq_issue_count",
+            "dataType": "int64",
+            "sourceColumn": "dq_issue_count",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "dq_max_severity",
+            "dataType": "string",
+            "sourceColumn": "dq_max_severity",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "needs_manual_review",
+            "dataType": "boolean",
+            "sourceColumn": "needs_manual_review",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "created_month",
+            "dataType": "string",
+            "sourceColumn": "created_month",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Requests",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Csv.Document(File.Contents(ExportFolder & \"fact_service_requests.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),\n    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),\n    Selected = Table.SelectColumns(Promoted, {\"unique_key\", \"status\", \"status_group\", \"created_at\", \"closed_at\", \"effective_closed_at\", \"created_date_key\", \"closed_date_key\", \"channel\", \"agency_code\", \"complaint_type\", \"descriptor\", \"incident_zip\", \"community_board\", \"resolution_hours\", \"resolution_days\", \"include_in_resolution_metrics\", \"within_analytical_target\", \"dq_issue_count\", \"dq_max_severity\", \"needs_manual_review\", \"created_month\"}),\n    Nulls = Table.TransformColumns(Selected, List.Transform(Table.ColumnNames(Selected), (c) => {c, each if _ = \"\" then null else _})),\n    Typed = Table.TransformColumnTypes(Nulls, {{\"unique_key\", type text}, {\"status\", type text}, {\"status_group\", type text}, {\"created_at\", type datetime}, {\"closed_at\", type datetime}, {\"effective_closed_at\", type datetime}, {\"created_date_key\", Int64.Type}, {\"closed_date_key\", Int64.Type}, {\"channel\", type text}, {\"agency_code\", type text}, {\"complaint_type\", type text}, {\"descriptor\", type text}, {\"incident_zip\", type text}, {\"community_board\", type text}, {\"resolution_hours\", type number}, {\"resolution_days\", type number}, {\"include_in_resolution_metrics\", type logical}, {\"within_analytical_target\", type logical}, {\"dq_issue_count\", Int64.Type}, {\"dq_max_severity\", type text}, {\"needs_manual_review\", type logical}, {\"created_month\", type text}}, \"en-US\"),\n    Result = Typed\nin\n    Result"
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "Total Requests",
+            "expression": "COUNTROWS ( Requests )",
+            "formatString": "#,0",
+            "displayFolder": "Volume"
+          },
+          {
+            "name": "Closed Requests",
+            "expression": "CALCULATE ( [Total Requests], Requests[status_group] = \"Closed\" )",
+            "formatString": "#,0",
+            "displayFolder": "Volume"
+          },
+          {
+            "name": "Open Requests",
+            "expression": "CALCULATE ( [Total Requests], Requests[status_group] = \"Open\" )",
+            "formatString": "#,0",
+            "displayFolder": "Volume"
+          },
+          {
+            "name": "Resolution Rate",
+            "expression": "DIVIDE ( [Closed Requests], [Total Requests] )",
+            "formatString": "0.0%",
+            "displayFolder": "Volume"
+          },
+          {
+            "name": "Requests Created",
+            "expression": "[Total Requests]",
+            "formatString": "#,0",
+            "displayFolder": "Flow"
+          },
+          {
+            "name": "Requests Closed",
+            "expression": "CALCULATE ( COUNTROWS ( Requests ), USERELATIONSHIP ( Requests[closed_date_key], Calendar[date_key] ), NOT ISBLANK ( Requests[effective_closed_at] ), Requests[closed_date_key] IN VALUES ( Calendar[date_key] ) )",
+            "formatString": "#,0",
+            "displayFolder": "Flow"
+          },
+          {
+            "name": "Net Backlog Change",
+            "expression": "[Requests Created] - [Requests Closed]",
+            "formatString": "#,0",
+            "displayFolder": "Flow"
+          },
+          {
+            "name": "Avg Resolution Hours",
+            "expression": "AVERAGE ( Requests[resolution_hours] )",
+            "formatString": "#,0.0",
+            "displayFolder": "Resolution"
+          },
+          {
+            "name": "Median Resolution Hours",
+            "expression": "MEDIAN ( Requests[resolution_hours] )",
+            "formatString": "#,0.0",
+            "displayFolder": "Resolution"
+          },
+          {
+            "name": "P90 Resolution Hours",
+            "expression": "PERCENTILE.INC ( Requests[resolution_hours], 0.9 )",
+            "formatString": "#,0",
+            "displayFolder": "Resolution"
+          },
+          {
+            "name": "Median Resolution Days",
+            "expression": "DIVIDE ( [Median Resolution Hours], 24 )",
+            "formatString": "#,0.0",
+            "displayFolder": "Resolution"
+          },
+          {
+            "name": "Avg Resolution Days",
+            "expression": "DIVIDE ( [Avg Resolution Hours], 24 )",
+            "formatString": "#,0.0",
+            "displayFolder": "Resolution"
+          },
+          {
+            "name": "P90 Resolution Days",
+            "expression": "DIVIDE ( [P90 Resolution Hours], 24 )",
+            "formatString": "#,0.0",
+            "displayFolder": "Resolution"
+          },
+          {
+            "name": "Resolution Sample",
+            "expression": "CALCULATE ( COUNTROWS ( Requests ), Requests[include_in_resolution_metrics] = TRUE () )",
+            "formatString": "#,0",
+            "displayFolder": "Resolution"
+          },
+          {
+            "name": "Within 7-Day Target %",
+            "expression": "DIVIDE ( CALCULATE ( COUNTROWS ( Requests ), Requests[within_analytical_target] = TRUE () ), [Resolution Sample] )",
+            "formatString": "0.0%",
+            "displayFolder": "Resolution"
+          },
+          {
+            "name": "Records With DQ Issues",
+            "expression": "CALCULATE ( COUNTROWS ( Requests ), Requests[dq_issue_count] > 0 )",
+            "formatString": "#,0",
+            "displayFolder": "Data Quality"
+          },
+          {
+            "name": "DQ Pass Rate",
+            "expression": "1 - DIVIDE ( [Records With DQ Issues], [Total Requests] )",
+            "formatString": "0.00%",
+            "displayFolder": "Data Quality"
+          },
+          {
+            "name": "DQ Affected %",
+            "expression": "DIVIDE ( [Records With DQ Issues], [Total Requests] )",
+            "formatString": "0.00%",
+            "displayFolder": "Data Quality"
+          },
+          {
+            "name": "Pending Manual Review",
+            "expression": "CALCULATE ( COUNTROWS ( Requests ), Requests[needs_manual_review] = TRUE () )",
+            "formatString": "#,0",
+            "displayFolder": "Data Quality"
+          }
+        ]
+      },
+      {
+        "name": "Calendar",
+        "columns": [
+          {
+            "name": "date_key",
+            "dataType": "int64",
+            "sourceColumn": "date_key",
+            "summarizeBy": "none",
+            "isHidden": true
+          },
+          {
+            "name": "full_date",
+            "dataType": "dateTime",
+            "sourceColumn": "full_date",
+            "summarizeBy": "none",
+            "formatString": "yyyy-mm-dd",
+            "isKey": true
+          },
+          {
+            "name": "year",
+            "dataType": "int64",
+            "sourceColumn": "year",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "quarter",
+            "dataType": "int64",
+            "sourceColumn": "quarter",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "month",
+            "dataType": "int64",
+            "sourceColumn": "month",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "month_name",
+            "dataType": "string",
+            "sourceColumn": "month_name",
+            "summarizeBy": "none",
+            "sortByColumn": "month"
+          },
+          {
+            "name": "year_month",
+            "dataType": "string",
+            "sourceColumn": "year_month",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "day_of_week",
+            "dataType": "int64",
+            "sourceColumn": "day_of_week",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "day_name",
+            "dataType": "string",
+            "sourceColumn": "day_name",
+            "summarizeBy": "none",
+            "sortByColumn": "day_of_week"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Calendar",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Csv.Document(File.Contents(ExportFolder & \"dim_date.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),\n    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),\n    Selected = Table.SelectColumns(Promoted, {\"date_key\", \"full_date\", \"year\", \"quarter\", \"month\", \"month_name\", \"year_month\", \"day_of_week\", \"day_name\"}),\n    Nulls = Table.TransformColumns(Selected, List.Transform(Table.ColumnNames(Selected), (c) => {c, each if _ = \"\" then null else _})),\n    Typed = Table.TransformColumnTypes(Nulls, {{\"date_key\", Int64.Type}, {\"full_date\", type datetime}, {\"year\", Int64.Type}, {\"quarter\", Int64.Type}, {\"month\", Int64.Type}, {\"month_name\", type text}, {\"year_month\", type text}, {\"day_of_week\", Int64.Type}, {\"day_name\", type text}}, \"en-US\"),\n    Result = Table.SelectRows(Typed, each [year] = 2025)\nin\n    Result"
+            }
+          }
+        ],
+        "dataCategory": "Time"
+      },
+      {
+        "name": "Agency",
+        "columns": [
+          {
+            "name": "agency_code",
+            "dataType": "string",
+            "sourceColumn": "agency_code",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "agency_name",
+            "dataType": "string",
+            "sourceColumn": "agency_name",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Agency",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Csv.Document(File.Contents(ExportFolder & \"dim_agency.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),\n    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),\n    Selected = Table.SelectColumns(Promoted, {\"agency_code\", \"agency_name\"}),\n    Nulls = Table.TransformColumns(Selected, List.Transform(Table.ColumnNames(Selected), (c) => {c, each if _ = \"\" then null else _})),\n    Typed = Table.TransformColumnTypes(Nulls, {{\"agency_code\", type text}, {\"agency_name\", type text}}, \"en-US\"),\n    Result = Typed\nin\n    Result"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Backlog",
+        "columns": [
+          {
+            "name": "month_end",
+            "dataType": "dateTime",
+            "sourceColumn": "month_end",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "agency_code",
+            "dataType": "string",
+            "sourceColumn": "agency_code",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "backlog",
+            "dataType": "int64",
+            "sourceColumn": "backlog",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Backlog",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Csv.Document(File.Contents(ExportFolder & \"backlog_monthly.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),\n    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),\n    Selected = Table.SelectColumns(Promoted, {\"month_end\", \"agency_code\", \"backlog\"}),\n    Nulls = Table.TransformColumns(Selected, List.Transform(Table.ColumnNames(Selected), (c) => {c, each if _ = \"\" then null else _})),\n    Typed = Table.TransformColumnTypes(Nulls, {{\"month_end\", type datetime}, {\"agency_code\", type text}, {\"backlog\", Int64.Type}}, \"en-US\"),\n    Result = Typed\nin\n    Result"
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "Month-End Backlog",
+            "expression": "SUM ( Backlog[backlog] )",
+            "formatString": "#,0"
+          },
+          {
+            "name": "Year-End Backlog",
+            "expression": "CALCULATE ( SUM ( Backlog[backlog] ), Backlog[month_end] = MAX ( Backlog[month_end] ) )",
+            "formatString": "#,0"
+          }
+        ]
+      },
+      {
+        "name": "OpenRequests",
+        "columns": [
+          {
+            "name": "unique_key",
+            "dataType": "string",
+            "sourceColumn": "unique_key",
+            "summarizeBy": "none",
+            "isHidden": true
+          },
+          {
+            "name": "agency_code",
+            "dataType": "string",
+            "sourceColumn": "agency_code",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "complaint_type",
+            "dataType": "string",
+            "sourceColumn": "complaint_type",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "incident_zip",
+            "dataType": "string",
+            "sourceColumn": "incident_zip",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "status",
+            "dataType": "string",
+            "sourceColumn": "status",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "created_at",
+            "dataType": "dateTime",
+            "sourceColumn": "created_at",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "age_days",
+            "dataType": "int64",
+            "sourceColumn": "age_days",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "aging_bucket",
+            "dataType": "string",
+            "sourceColumn": "aging_bucket",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "overdue_vs_analytical_target",
+            "dataType": "boolean",
+            "sourceColumn": "overdue_vs_analytical_target",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "OpenRequests",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Csv.Document(File.Contents(ExportFolder & \"open_requests.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),\n    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),\n    Selected = Table.SelectColumns(Promoted, {\"unique_key\", \"agency_code\", \"complaint_type\", \"incident_zip\", \"status\", \"created_at\", \"age_days\", \"aging_bucket\", \"overdue_vs_analytical_target\"}),\n    Nulls = Table.TransformColumns(Selected, List.Transform(Table.ColumnNames(Selected), (c) => {c, each if _ = \"\" then null else _})),\n    Typed = Table.TransformColumnTypes(Nulls, {{\"unique_key\", type text}, {\"agency_code\", type text}, {\"complaint_type\", type text}, {\"incident_zip\", type text}, {\"status\", type text}, {\"created_at\", type datetime}, {\"age_days\", Int64.Type}, {\"aging_bucket\", type text}, {\"overdue_vs_analytical_target\", type logical}}, \"en-US\"),\n    Result = Typed\nin\n    Result"
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "Current Backlog",
+            "expression": "COUNTROWS ( OpenRequests )",
+            "formatString": "#,0"
+          },
+          {
+            "name": "Overdue Open Requests",
+            "expression": "CALCULATE ( COUNTROWS ( OpenRequests ), OpenRequests[overdue_vs_analytical_target] = TRUE () )",
+            "formatString": "#,0"
+          },
+          {
+            "name": "Avg Backlog Age Days",
+            "expression": "AVERAGE ( OpenRequests[age_days] )",
+            "formatString": "#,0"
+          }
+        ]
+      },
+      {
+        "name": "DQIssues",
+        "columns": [
+          {
+            "name": "issue_id",
+            "dataType": "int64",
+            "sourceColumn": "issue_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "unique_key",
+            "dataType": "string",
+            "sourceColumn": "unique_key",
+            "summarizeBy": "none",
+            "isHidden": true
+          },
+          {
+            "name": "record_hash",
+            "dataType": "string",
+            "sourceColumn": "record_hash",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "rule_id",
+            "dataType": "string",
+            "sourceColumn": "rule_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "rule_name",
+            "dataType": "string",
+            "sourceColumn": "rule_name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "issue_category",
+            "dataType": "string",
+            "sourceColumn": "issue_category",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "severity",
+            "dataType": "string",
+            "sourceColumn": "severity",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "affected_column",
+            "dataType": "string",
+            "sourceColumn": "affected_column",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "original_value",
+            "dataType": "string",
+            "sourceColumn": "original_value",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "recommended_treatment",
+            "dataType": "string",
+            "sourceColumn": "recommended_treatment",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "resolution_status",
+            "dataType": "string",
+            "sourceColumn": "resolution_status",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "agency",
+            "dataType": "string",
+            "sourceColumn": "agency",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "complaint_type",
+            "dataType": "string",
+            "sourceColumn": "complaint_type",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "status",
+            "dataType": "string",
+            "sourceColumn": "status",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "created_at",
+            "dataType": "dateTime",
+            "sourceColumn": "created_at",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "closed_at",
+            "dataType": "dateTime",
+            "sourceColumn": "closed_at",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "created_month",
+            "dataType": "string",
+            "sourceColumn": "created_month",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "DQIssues",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Csv.Document(File.Contents(ExportFolder & \"dq_issues.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),\n    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),\n    Selected = Table.SelectColumns(Promoted, {\"issue_id\", \"unique_key\", \"record_hash\", \"rule_id\", \"rule_name\", \"issue_category\", \"severity\", \"affected_column\", \"original_value\", \"recommended_treatment\", \"resolution_status\", \"agency\", \"complaint_type\", \"status\", \"created_at\", \"closed_at\", \"created_month\"}),\n    Nulls = Table.TransformColumns(Selected, List.Transform(Table.ColumnNames(Selected), (c) => {c, each if _ = \"\" then null else _})),\n    Typed = Table.TransformColumnTypes(Nulls, {{\"issue_id\", Int64.Type}, {\"unique_key\", type text}, {\"record_hash\", type text}, {\"rule_id\", type text}, {\"rule_name\", type text}, {\"issue_category\", type text}, {\"severity\", type text}, {\"affected_column\", type text}, {\"original_value\", type text}, {\"recommended_treatment\", type text}, {\"resolution_status\", type text}, {\"agency\", type text}, {\"complaint_type\", type text}, {\"status\", type text}, {\"created_at\", type datetime}, {\"closed_at\", type datetime}, {\"created_month\", type text}}, \"en-US\"),\n    Result = Typed\nin\n    Result"
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "DQ Issues",
+            "expression": "COUNTROWS ( DQIssues )",
+            "formatString": "#,0"
+          }
+        ]
+      },
+      {
+        "name": "DQRules",
+        "columns": [
+          {
+            "name": "rule_id",
+            "dataType": "string",
+            "sourceColumn": "rule_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "rule_name",
+            "dataType": "string",
+            "sourceColumn": "rule_name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "category",
+            "dataType": "string",
+            "sourceColumn": "category",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "severity",
+            "dataType": "string",
+            "sourceColumn": "severity",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "treatment",
+            "dataType": "string",
+            "sourceColumn": "treatment",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "issues",
+            "dataType": "int64",
+            "sourceColumn": "issues",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "affected_records",
+            "dataType": "int64",
+            "sourceColumn": "affected_records",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "DQRules",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Csv.Document(File.Contents(ExportFolder & \"dq_rule_summary.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),\n    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),\n    Selected = Table.SelectColumns(Promoted, {\"rule_id\", \"rule_name\", \"category\", \"severity\", \"treatment\", \"issues\", \"affected_records\"}),\n    Nulls = Table.TransformColumns(Selected, List.Transform(Table.ColumnNames(Selected), (c) => {c, each if _ = \"\" then null else _})),\n    Typed = Table.TransformColumnTypes(Nulls, {{\"rule_id\", type text}, {\"rule_name\", type text}, {\"category\", type text}, {\"severity\", type text}, {\"treatment\", type text}, {\"issues\", Int64.Type}, {\"affected_records\", Int64.Type}}, \"en-US\"),\n    Result = Typed\nin\n    Result"
+            }
+          }
+        ]
+      },
+      {
+        "name": "MissingValues",
+        "columns": [
+          {
+            "name": "column",
+            "dataType": "string",
+            "sourceColumn": "column",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "missing",
+            "dataType": "int64",
+            "sourceColumn": "missing",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "missing_pct",
+            "dataType": "double",
+            "sourceColumn": "missing_pct",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "MissingValues",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Csv.Document(File.Contents(ExportFolder & \"dq_missing_values.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),\n    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),\n    Selected = Table.SelectColumns(Promoted, {\"column\", \"missing\", \"missing_pct\"}),\n    Nulls = Table.TransformColumns(Selected, List.Transform(Table.ColumnNames(Selected), (c) => {c, each if _ = \"\" then null else _})),\n    Typed = Table.TransformColumnTypes(Nulls, {{\"column\", type text}, {\"missing\", Int64.Type}, {\"missing_pct\", type number}}, \"en-US\"),\n    Result = Typed\nin\n    Result"
+            }
+          }
+        ]
+      },
+      {
+        "name": "RawVsClean",
+        "columns": [
+          {
+            "name": "metric",
+            "dataType": "string",
+            "sourceColumn": "metric",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "ord",
+            "dataType": "int64",
+            "sourceColumn": "ord",
+            "summarizeBy": "none",
+            "isHidden": true
+          },
+          {
+            "name": "raw_value",
+            "dataType": "double",
+            "sourceColumn": "raw_value",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "clean_value",
+            "dataType": "double",
+            "sourceColumn": "clean_value",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "abs_diff",
+            "dataType": "double",
+            "sourceColumn": "abs_diff",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "pct_diff",
+            "dataType": "double",
+            "sourceColumn": "pct_diff",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "RawVsClean",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Csv.Document(File.Contents(ExportFolder & \"raw_vs_clean.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),\n    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),\n    Selected = Table.SelectColumns(Promoted, {\"metric\", \"ord\", \"raw_value\", \"clean_value\", \"abs_diff\", \"pct_diff\"}),\n    Nulls = Table.TransformColumns(Selected, List.Transform(Table.ColumnNames(Selected), (c) => {c, each if _ = \"\" then null else _})),\n    Typed = Table.TransformColumnTypes(Nulls, {{\"metric\", type text}, {\"ord\", Int64.Type}, {\"raw_value\", type number}, {\"clean_value\", type number}, {\"abs_diff\", type number}, {\"pct_diff\", type number}}, \"en-US\"),\n    Result = Typed\nin\n    Result"
+            }
+          }
+        ]
+      },
+      {
+        "name": "RawVsCleanAgency",
+        "columns": [
+          {
+            "name": "agency_code",
+            "dataType": "string",
+            "sourceColumn": "agency_code",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "raw_avg_hours",
+            "dataType": "double",
+            "sourceColumn": "raw_avg_hours",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "clean_avg_hours",
+            "dataType": "double",
+            "sourceColumn": "clean_avg_hours",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "avg_pct_diff",
+            "dataType": "double",
+            "sourceColumn": "avg_pct_diff",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "raw_median_hours",
+            "dataType": "double",
+            "sourceColumn": "raw_median_hours",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "clean_median_hours",
+            "dataType": "double",
+            "sourceColumn": "clean_median_hours",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "RawVsCleanAgency",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Csv.Document(File.Contents(ExportFolder & \"raw_vs_clean_agency.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),\n    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),\n    Selected = Table.SelectColumns(Promoted, {\"agency_code\", \"raw_avg_hours\", \"clean_avg_hours\", \"avg_pct_diff\", \"raw_median_hours\", \"clean_median_hours\"}),\n    Nulls = Table.TransformColumns(Selected, List.Transform(Table.ColumnNames(Selected), (c) => {c, each if _ = \"\" then null else _})),\n    Typed = Table.TransformColumnTypes(Nulls, {{\"agency_code\", type text}, {\"raw_avg_hours\", type number}, {\"clean_avg_hours\", type number}, {\"avg_pct_diff\", type number}, {\"raw_median_hours\", type number}, {\"clean_median_hours\", type number}}, \"en-US\"),\n    Result = Typed\nin\n    Result"
+            }
+          }
+        ]
+      },
+      {
+        "name": "CleaningAudit",
+        "columns": [
+          {
+            "name": "action",
+            "dataType": "string",
+            "sourceColumn": "action",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "rule_ids",
+            "dataType": "string",
+            "sourceColumn": "rule_ids",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "records",
+            "dataType": "int64",
+            "sourceColumn": "records",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "CleaningAudit",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": "let\n    Source = Csv.Document(File.Contents(ExportFolder & \"cleaning_audit_summary.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),\n    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),\n    Selected = Table.SelectColumns(Promoted, {\"action\", \"rule_ids\", \"records\"}),\n    Nulls = Table.TransformColumns(Selected, List.Transform(Table.ColumnNames(Selected), (c) => {c, each if _ = \"\" then null else _})),\n    Typed = Table.TransformColumnTypes(Nulls, {{\"action\", type text}, {\"rule_ids\", type text}, {\"records\", Int64.Type}}, \"en-US\"),\n    Result = Typed\nin\n    Result"
+            }
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "r0",
+        "fromTable": "Requests",
+        "fromColumn": "created_date_key",
+        "toTable": "Calendar",
+        "toColumn": "date_key"
+      },
+      {
+        "name": "r1",
+        "fromTable": "Requests",
+        "fromColumn": "closed_date_key",
+        "toTable": "Calendar",
+        "toColumn": "date_key",
+        "isActive": false
+      },
+      {
+        "name": "r2",
+        "fromTable": "Requests",
+        "fromColumn": "agency_code",
+        "toTable": "Agency",
+        "toColumn": "agency_code"
+      },
+      {
+        "name": "r3",
+        "fromTable": "Backlog",
+        "fromColumn": "agency_code",
+        "toTable": "Agency",
+        "toColumn": "agency_code"
+      },
+      {
+        "name": "r4",
+        "fromTable": "OpenRequests",
+        "fromColumn": "agency_code",
+        "toTable": "Agency",
+        "toColumn": "agency_code"
+      },
+      {
+        "name": "r5",
+        "fromTable": "DQIssues",
+        "fromColumn": "agency",
+        "toTable": "Agency",
+        "toColumn": "agency_code"
+      },
+      {
+        "name": "r6",
+        "fromTable": "RawVsCleanAgency",
+        "fromColumn": "agency_code",
+        "toTable": "Agency",
+        "toColumn": "agency_code"
+      }
+    ],
+    "annotations": [
+      {
+        "name": "PBI_QueryOrder",
+        "value": "[\"Requests\", \"Calendar\", \"Agency\", \"Backlog\", \"OpenRequests\", \"DQIssues\", \"DQRules\", \"MissingValues\", \"RawVsClean\", \"RawVsCleanAgency\", \"CleaningAudit\"]"
+      }
+    ]
+  }
+}

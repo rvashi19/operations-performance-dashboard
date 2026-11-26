@@ -1,0 +1,16 @@
+agency_code,agency_name,total_requests,closed_requests,open_requests,resolution_rate,avg_resolution_hours,median_resolution_hours,p90_resolution_hours,within_target_rate,dq_issues,records_with_dq_issues
+NYPD,New York City Police Department,48108,48108,0,1.0,2.12,1.35,4.89,1.0,156,156
+DSNY,Department of Sanitation,23878,23414,464,0.9806,90.97,47.76,148.41,0.9176,273,273
+DOT,Department of Transportation,16829,16542,287,0.9829,211.23,62.7,305.71,0.6661,365,347
+DEP,Department of Environmental Protection,12324,12175,149,0.9879,71.18,18.8,165.7,0.9038,2,2
+HPD,Department of Housing Preservation and Development,11903,11836,67,0.9944,226.92,97.28,519.29,0.6461,6,6
+DPR,Department of Parks and Recreation,11729,10883,846,0.9279,1436.9,133.75,5803.4,0.5459,313,313
+DOB,Department of Buildings,4456,4302,154,0.9654,1803.52,559.67,5509.8,0.3403,258,257
+DOHMH,Department of Health and Mental Hygiene,3497,3261,236,0.9325,384.54,4.88,1440.25,0.6765,5,5
+DCWP,Department of Consumer and Worker Protection,635,634,1,0.9984,375.77,118.59,776.42,0.5521,0,0
+DHS,Department of Homeless Services,369,369,0,1.0,23.42,2.11,6.53,0.9739,63,63
+EDC,Economic Development Corporation,316,233,83,0.7373,6894.29,7893.55,8618.39,0.0,15,15
+TLC,Taxi and Limousine Commission,133,95,38,0.7143,3501.5,3054.05,7021.79,0.0421,10,10
+DOE,Department of Education,86,86,0,1.0,2431.93,1379.67,5390.04,0.2907,1,1
+OOS,Office of the Sheriff,68,68,0,1.0,724.55,902.26,1059.16,0.0441,0,0
+OTI,Office of Technology and Innovation,17,13,4,0.7647,387.48,506.18,566.27,0.1538,0,0

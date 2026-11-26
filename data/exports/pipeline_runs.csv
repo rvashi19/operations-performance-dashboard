@@ -1,0 +1,6 @@
+run_id,mode,status,started_at,finished_at,duration_seconds,window_start,window_end,records_extracted,records_loaded,records_rejected,issues_detected,checkpoint_updated_at,raw_file,error_message
+18a3a47e-2e51-49ea-bcbb-bbf4e8f78034,full-refresh,succeeded,2026-11-26 00:34:42.425854+00:00,2026-11-26 00:37:46.780106+00:00,184.35,2025-01-01,2025-12-31 23:59:59.999,134348.0,134348.0,0.0,1467.0,2026-11-25 02:33:24.615000+00:00,C:\Users\raviv\OneDrive\Desktop\operational dashboard\data\raw\nyc311_full-refresh_20261125T163442.jsonl.gz,
+6429c255-b84f-48bb-8a71-91db31e92a3c,incremental,succeeded,2026-11-26 00:37:56.616730+00:00,2026-11-26 00:38:39.137673+00:00,42.52,2025-01-01,2025-12-31 23:59:59.999,5170.0,134348.0,0.0,1467.0,2026-11-25 02:33:24.615000+00:00,C:\Users\raviv\OneDrive\Desktop\operational dashboard\data\raw\nyc311_incremental_20261125T163756.jsonl.gz,
+70549019-3b38-427b-b6eb-af12bf1e39d0,generate-reports,succeeded,2026-11-26 00:42:09.058603+00:00,2026-11-26 00:42:17.479868+00:00,8.42,2025-01-01,2025-12-31 23:59:59.999,,,,,,,
+3e9cb74b-ef3b-4d40-8aa5-cbdd8d0efbda,generate-reports,succeeded,2026-11-26 00:42:34.979072+00:00,2026-11-26 00:42:44.107426+00:00,9.13,2025-01-01,2025-12-31 23:59:59.999,,,,,,,
+ddab661f-26ab-4b72-b982-efd792c8024e,generate-reports,running,2026-11-26 00:53:04.981466+00:00,,,2025-01-01,2025-12-31 23:59:59.999,,,,,,,

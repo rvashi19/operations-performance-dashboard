@@ -1,0 +1,2 @@
+total_requests,closed_requests,open_requests,resolution_rate,avg_resolution_hours,median_resolution_hours,p90_resolution_hours,within_target_rate,resolution_sample
+134348,132019,2329,0.9827,275.68,15.3,335.38,0.8302,131951

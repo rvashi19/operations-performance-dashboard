@@ -1,0 +1,15 @@
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+logs/
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+powerbi/*.pbix
+data/exports/fact_service_requests.csv
+powerbi/*.SemanticModel/.pbi/cache.abf
+powerbi/*.SemanticModel/.pbi/localSettings.json
+powerbi/*.Report/.pbi/localSettings.json

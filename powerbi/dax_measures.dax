@@ -1,0 +1,116 @@
+// =====================================================================================
+// DAX measures. Create a table named _Measures (Enter Data, one dummy column, then hide it)
+// and add each measure below. Table names match powerbi/power_query.m.
+// Durations: FactServiceRequests[resolution_hours] is BLANK when a record is excluded from
+// resolution metrics, so AVERAGE/MEDIAN/PERCENTILE ignore those records automatically.
+// =====================================================================================
+
+// ---------- Volume & status ----------
+Total Requests = DISTINCTCOUNT ( FactServiceRequests[unique_key] )
+
+Closed Requests =
+CALCULATE ( [Total Requests], FactServiceRequests[status_group] = "Closed" )
+
+Open Requests =
+CALCULATE ( [Total Requests], FactServiceRequests[status_group] = "Open" )
+
+Resolution Rate = DIVIDE ( [Closed Requests], [Total Requests] )
+
+// ---------- Resolution time ----------
+Avg Resolution Hours = AVERAGE ( FactServiceRequests[resolution_hours] )
+Median Resolution Hours = MEDIAN ( FactServiceRequests[resolution_hours] )
+P90 Resolution Hours = PERCENTILE.INC ( FactServiceRequests[resolution_hours], 0.9 )
+Avg Resolution Days = DIVIDE ( [Avg Resolution Hours], 24 )
+Median Resolution Days = DIVIDE ( [Median Resolution Hours], 24 )
+P90 Resolution Days = DIVIDE ( [P90 Resolution Hours], 24 )
+
+Avg to Median Ratio = DIVIDE ( [Avg Resolution Hours], [Median Resolution Hours] )
+
+Resolution Sample =
+CALCULATE ( COUNTROWS ( FactServiceRequests ), FactServiceRequests[include_in_resolution_metrics] = TRUE () )
+
+// ---------- Analytical target (NOT an official SLA) ----------
+Within Target Requests =
+CALCULATE ( COUNTROWS ( FactServiceRequests ), FactServiceRequests[within_analytical_target] = TRUE () )
+
+Analytical Target Compliance % = DIVIDE ( [Within Target Requests], [Resolution Sample] )
+
+// ---------- Monthly flow (use with DimDate on the axis) ----------
+Requests Created =
+CALCULATE ( [Total Requests], USERELATIONSHIP ( FactServiceRequests[created_date], DimDate[full_date] ) )
+
+Requests Closed =
+CALCULATE (
+    COUNTROWS ( FactServiceRequests ),
+    USERELATIONSHIP ( FactServiceRequests[effective_closed_date], DimDate[full_date] )
+)
+
+Net Backlog Change = [Requests Created] - [Requests Closed]
+
+Requests Created 3M Rolling Avg =
+AVERAGEX (
+    DATESINPERIOD ( DimDate[full_date], MAX ( DimDate[full_date] ), -3, MONTH ),
+    [Requests Created]
+) * 30.4   // daily average x average days per month
+
+// ---------- Backlog ----------
+// Historical backlog at the end of the period in context (works on any date granularity).
+Backlog At Period End =
+VAR AsOf = MAX ( DimDate[full_date] )
+RETURN
+    CALCULATE (
+        COUNTROWS ( FactServiceRequests ),
+        REMOVEFILTERS ( DimDate ),
+        FactServiceRequests[created_date] <= AsOf,
+        NOT ( FactServiceRequests[status_group] = "Closed" && ISBLANK ( FactServiceRequests[effective_closed_date] ) ),
+        ISBLANK ( FactServiceRequests[effective_closed_date] ) || FactServiceRequests[effective_closed_date] > AsOf
+    )
+
+// Current open backlog as of the reporting date (from OpenRequests view).
+Current Backlog = COUNTROWS ( OpenRequests )
+
+Overdue Open Requests =
+CALCULATE ( COUNTROWS ( OpenRequests ), OpenRequests[overdue_vs_analytical_target] = TRUE () )
+
+Overdue % of Backlog = DIVIDE ( [Overdue Open Requests], [Current Backlog] )
+Avg Backlog Age Days = AVERAGE ( OpenRequests[age_days] )
+
+// ---------- Data quality ----------
+Records Inspected = SUM ( StagingInspected[records_inspected] )
+Total DQ Issues = COUNTROWS ( DQIssues )
+Affected Records = DISTINCTCOUNT ( DQIssues[unique_key] )
+Affected Record % = DIVIDE ( [Affected Records], [Records Inspected] )
+DQ Pass Rate = 1 - [Affected Record %]
+
+High Severity Issues =
+CALCULATE ( [Total DQ Issues], DQIssues[severity] IN { "critical", "high" } )
+
+Pending Manual Review =
+CALCULATE ( [Affected Records], DQIssues[resolution_status] = "pending_manual_review" )
+
+// Agency-level affected rate (use with DimAgency on rows)
+Agency DQ Affected % =
+DIVIDE (
+    CALCULATE ( DISTINCTCOUNT ( FactServiceRequests[unique_key] ), FactServiceRequests[has_dq_issue] = TRUE () ),
+    [Total Requests]
+)
+
+// ---------- Raw vs cleaned ----------
+Raw Value = SUM ( RawVsClean[raw_value] )
+Clean Value = SUM ( RawVsClean[clean_value] )
+Abs Difference = [Clean Value] - [Raw Value]
+Pct Difference = DIVIDE ( [Abs Difference], [Raw Value] )
+
+// ---------- Conditional formatting helpers ----------
+Target Compliance Color =
+SWITCH ( TRUE (),
+    [Analytical Target Compliance %] >= 0.9, "#2E7D32",
+    [Analytical Target Compliance %] >= 0.75, "#F9A825",
+    "#C62828" )
+
+DQ Rate Color =
+SWITCH ( TRUE (),
+    [Agency DQ Affected %] <= 0.01, "#2E7D32",
+    [Agency DQ Affected %] <= 0.05, "#F9A825",
+    "#C62828" )
+

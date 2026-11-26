@@ -1,0 +1,31 @@
+{
+  "name": "Ops311 Municipal",
+  "dataColors": ["#1F4E79", "#E07B39", "#5B9BD5", "#70AD47", "#A5A5A5", "#FFC000", "#7030A0", "#C00000"],
+  "background": "#FFFFFF",
+  "foreground": "#1B1B1B",
+  "tableAccent": "#1F4E79",
+  "good": "#2E7D32",
+  "neutral": "#F9A825",
+  "bad": "#C62828",
+  "maximum": "#1F4E79",
+  "center": "#9DC3E6",
+  "minimum": "#F2F2F2",
+  "textClasses": {
+    "title": { "fontFace": "Segoe UI Semibold", "fontSize": 14, "color": "#1B1B1B" },
+    "header": { "fontFace": "Segoe UI Semibold", "fontSize": 12, "color": "#1B1B1B" },
+    "label": { "fontFace": "Segoe UI", "fontSize": 10, "color": "#404040" },
+    "callout": { "fontFace": "Segoe UI Light", "fontSize": 28, "color": "#1F4E79" }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [{ "show": true, "color": { "solid": { "color": "#FFFFFF" } }, "transparency": 0 }],
+        "border": [{ "show": true, "color": { "solid": { "color": "#D9D9D9" } }, "radius": 6 }],
+        "title": [{ "show": true, "fontSize": 12, "fontColor": { "solid": { "color": "#1B1B1B" } } }]
+      }
+    },
+    "page": { "*": { "background": [{ "color": { "solid": { "color": "#F4F6F9" } }, "transparency": 0 }] } },
+    "card": { "*": { "labels": [{ "fontSize": 26, "color": { "solid": { "color": "#1F4E79" } } }] } },
+    "slicer": { "*": { "header": [{ "fontSize": 10 }] } }
+  }
+}

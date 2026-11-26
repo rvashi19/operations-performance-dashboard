@@ -1,0 +1,38 @@
+{
+  "run_id": "6429c255-b84f-48bb-8a71-91db31e92a3c",
+  "reporting_date": "2026-11-25",
+  "window": [
+    "2025-01-01 00:00:00",
+    "2025-12-31 23:59:59.999000"
+  ],
+  "records_inspected": 134348,
+  "records_with_issues": 1448,
+  "total_issues": 1467,
+  "affected_pct": 0.01077797957543097,
+  "pass_rate": 0.9892220204245691,
+  "manual_review_records": 191,
+  "duplicate_ids": 0,
+  "exact_duplicates": 0,
+  "kpis_clean": {
+    "total_requests": 134348,
+    "closed_requests": 132019,
+    "open_requests": 2329,
+    "resolution_rate": 0.9826644237353738,
+    "avg_resolution_hours": 275.6784875446188,
+    "median_resolution_hours": 15.297,
+    "p90_resolution_hours": 335.376,
+    "resolution_sample": 131951,
+    "within_target_rate": 0.8302400133382847
+  },
+  "kpis_raw": {
+    "total_requests": 134348,
+    "closed_requests": 132019,
+    "open_requests": 2329,
+    "resolution_rate": 0.9826644237353738,
+    "avg_resolution_hours": 275.81175835679187,
+    "median_resolution_hours": 15.234166666666667,
+    "p90_resolution_hours": 335.9720833333334,
+    "resolution_sample": 132148,
+    "within_target_rate": 0.8302206616823562
+  }
+}

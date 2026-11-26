@@ -1,0 +1,168 @@
+agency_code,complaint_type,total_requests,open_requests,avg_resolution_hours,median_resolution_hours,p90_resolution_hours,within_target_rate
+NYPD,Illegal Parking,17456,0,2.31,1.53,5.3,1.0
+NYPD,Noise - Residential,10292,0,1.57,1.03,3.49,1.0
+DOT,Street Condition,6497,215,55.27,25.04,118.82,0.9446
+DSNY,Missed Collection,6397,0,81.84,62.16,148.53,0.9184
+DEP,Water System,5865,6,59.27,10.02,144.46,0.9107
+NYPD,Abandoned Vehicle,5250,0,3.0,2.01,7.02,1.0
+NYPD,Blocked Driveway,5157,0,2.43,1.65,5.46,1.0
+DOT,Street Light Condition,3974,59,460.01,234.22,902.82,0.1515
+DPR,Damaged Tree,3880,204,948.83,87.84,3416.0,0.6385
+DSNY,Dirty Condition,3862,230,46.46,25.9,96.44,0.9639
+HPD,HEAT/HOT WATER,3187,43,39.13,34.98,72.25,1.0
+DPR,Overgrown Tree/Branches,2770,118,1005.31,112.12,3427.23,0.6237
+HPD,UNSANITARY CONDITION,2548,5,298.63,159.49,589.49,0.5199
+DEP,Sewer,2399,21,52.44,5.12,66.2,0.9592
+DOT,Traffic Signal Condition,2332,12,26.64,1.92,21.86,0.9793
+NYPD,Noise - Street/Sidewalk,2200,0,1.35,0.84,3.08,1.0
+DEP,Noise,2144,1,114.14,72.05,222.98,0.7942
+DSNY,Snow or Ice,2132,0,45.1,42.41,84.99,0.9887
+DOB,General Construction/Plumbing,2131,68,1526.52,392.55,4923.03,0.3679
+DSNY,Illegal Dumping,1920,31,88.3,67.07,178.58,0.8857
+DOT,Sidewalk Condition,1868,0,266.2,190.86,389.05,0.4438
+DSNY,Illegal Posting,1744,0,81.81,64.59,167.94,0.8997
+DSNY,Obstruction,1718,106,68.65,38.61,137.33,0.9324
+DSNY,Derelict Vehicles,1710,8,33.9,21.16,69.75,0.9888
+DPR,Root/Sewer/Sidewalk Condition,1701,455,4380.96,4390.45,8176.98,0.0369
+DSNY,Dead Animal,1535,0,61.99,49.46,124.02,0.9707
+DPR,Dead/Dying Tree,1473,48,2415.91,1004.1,7696.79,0.3011
+HPD,PLUMBING,1393,0,295.39,159.54,634.29,0.5176
+NYPD,Illegal Fireworks,1310,0,1.48,0.97,3.28,1.0
+NYPD,Noise - Commercial,1274,0,1.35,0.89,2.91,1.0
+DOB,Building/Use,1271,67,2868.18,2050.77,6773.33,0.1736
+NYPD,Non-Emergency Police Matter,1192,0,2.43,1.57,5.54,1.0
+NYPD,Noise - Vehicle,1146,0,1.55,0.98,3.67,1.0
+DOHMH,Rodent,1130,1,46.65,0.0,167.23,0.9017
+DSNY,Residential Disposal Complaint,1083,0,43.45,26.14,99.68,0.9751
+DEP,Lead,897,5,54.34,25.47,73.81,0.972
+DPR,Maintenance or Facility,888,8,141.08,37.31,246.63,0.8489
+HPD,PAINT/PLASTER,865,0,250.11,139.33,544.61,0.5896
+NYPD,Traffic,792,0,1.57,0.98,3.99,1.0
+HPD,DOOR/WINDOW,753,3,337.18,196.55,746.98,0.448
+HPD,ELECTRIC,679,3,256.94,118.17,566.19,0.5962
+DCWP,Consumer Complaint,635,1,375.77,118.59,776.42,0.5521
+HPD,WATER LEAK,630,2,290.45,149.96,601.14,0.535
+NYPD,Animal-Abuse,628,0,2.9,1.9,6.85,1.0
+HPD,FLOORING/STAIRS,573,7,304.44,174.68,691.02,0.4806
+DOT,Street Sign - Damaged,515,0,405.14,94.74,1098.85,0.7262
+HPD,APPLIANCE,467,2,341.07,236.23,768.58,0.4086
+HPD,GENERAL,467,2,310.75,170.4,693.05,0.4903
+DOHMH,Food Establishment,444,0,1380.11,1440.21,1441.84,0.0113
+DPR,Illegal Tree Damage,435,8,783.9,123.28,2337.67,0.5574
+DOT,Street Sign - Dangling,432,0,272.1,116.51,308.44,0.7708
+DSNY,Graffiti,385,2,686.98,847.97,952.51,0.2298
+DHS,Homeless Person Assistance,355,0,2.84,2.0,5.32,1.0
+NYPD,Graffiti,353,0,1.51,0.91,3.5,1.0
+DOT,Curb Condition,344,0,547.53,333.88,1326.5,0.1541
+DSNY,Sanitation Worker or Vehicle Complaint,329,1,131.43,97.68,258.17,0.7713
+EDC,Noise - Helicopter,316,83,6894.29,7893.55,8618.39,0.0
+DOHMH,Smoking or Vaping,314,0,953.85,1089.03,1440.46,0.0605
+DEP,Air Quality,310,2,69.92,31.84,167.26,0.9026
+DOT,Street Sign - Missing,309,0,594.85,100.73,2639.93,0.6602
+HPD,SAFETY,300,0,255.01,136.51,495.37,0.5667
+DOT,Highway Condition,288,1,117.62,44.41,191.7,0.8885
+DEP,Water Conservation,286,0,23.49,16.82,60.22,0.993
+DOHMH,Unsanitary Animal Pvt Property,268,0,67.61,0.0,240.06,0.8657
+NYPD,Noise - Park,263,0,1.36,0.79,2.84,1.0
+DOHMH,Indoor Air Quality,245,1,20.92,14.58,58.66,1.0
+DSNY,Highway Condition,242,0,1385.28,919.18,3553.87,0.1364
+DOB,Plumbing,210,3,1818.58,1607.82,4040.23,0.2947
+DPR,Animal in a Park,208,0,6.91,0.83,15.36,0.9952
+DOHMH,Standing Water,206,22,1.24,0.0,0.0,1.0
+NYPD,Bike/Roller/Skate Chronic,206,0,2.0,1.44,4.47,1.0
+DSNY,Litter Basket Request,168,0,84.77,67.27,169.63,0.8929
+DSNY,Lot Condition,167,82,471.47,119.56,964.21,0.6
+DPR,Wood Pile Remaining,165,5,402.96,86.78,560.29,0.6625
+DSNY,Litter Basket Complaint,162,0,69.17,46.89,147.82,0.9136
+DOB,Electrical,159,5,162.46,96.43,305.47,0.7792
+DOB,Special Projects Inspection Team (SPIT),139,3,2052.02,864.47,5773.24,0.2353
+DOB,Elevator,135,0,2146.58,991.34,5919.68,0.1778
+DSNY,Dumpster Complaint,131,0,72.63,50.14,151.45,0.9237
+DOHMH,Illegal Animal Kept as Pet,130,61,0.34,0.0,0.0,1.0
+NYPD,Encampment,128,0,3.17,1.54,7.22,1.0
+NYPD,Drug Activity,126,0,2.05,1.23,4.73,1.0
+DOHMH,Unleashed Dog,124,42,0.91,0.0,0.0,1.0
+DOT,Bus Stop Shelter Complaint,119,0,137.76,91.55,262.18,0.6639
+DOB,Emergency Response Team (ERT),114,0,319.98,155.08,658.59,0.5789
+DEP,Hazardous Materials,111,0,100.7,2.73,20.12,0.9369
+DOHMH,Unsanitary Pigeon Condition,106,0,41.74,0.0,119.46,0.9245
+TLC,For Hire Vehicle Complaint,104,23,3760.64,3257.96,7174.56,0.0
+NYPD,Panhandling,103,0,2.66,2.14,5.83,1.0
+DPR,Violation of Park Rules,101,0,1.33,0.81,3.55,1.0
+NYPD,Drinking,99,0,1.96,1.25,5.08,1.0
+DSNY,Vendor Enforcement,92,0,0.3,0.29,0.48,1.0
+NYPD,Urinating in Public,89,0,1.78,1.2,3.97,1.0
+DOT,Broken Parking Meter,88,0,255.78,135.72,633.93,0.5795
+DOE,School Maintenance,86,0,2431.93,1379.67,5390.04,0.2907
+DEP,Industrial Waste,85,9,38.11,8.02,135.77,0.9211
+DOHMH,Food Poisoning,85,3,1267.21,76.34,3043.2,0.561
+DEP,Water Quality,85,0,393.15,97.98,1063.28,0.5647
+DEP,Sewer Maintenance,80,73,3267.88,1.37,11324.84,0.7143
+DOB,Construction Safety Enforcement,77,0,0.0,0.0,0.0,1.0
+DOB,Boilers,72,3,575.87,197.44,1416.17,0.4203
+OOS,Cannabis Retailer,68,0,724.55,902.26,1059.16,0.0441
+DOHMH,Harboring Bees/Wasps,67,59,22.14,16.64,53.52,1.0
+DOHMH,Mold,62,0,22.19,14.25,50.72,1.0
+DOHMH,Day Care,61,0,26.38,24.27,24.48,1.0
+DPR,New Tree Request,57,0,793.3,238.37,2368.48,0.4035
+DPR,Uprooted Stump,51,0,240.54,18.59,360.66,0.8431
+DOB,Real Time Enforcement,50,0,393.38,2.76,59.43,0.92
+DOB,Investigations and Discipline (IAD),46,1,449.13,323.64,714.72,0.3333
+DOHMH,Poison Ivy,38,0,1170.35,1440.04,1440.38,0.0789
+DSNY,Street Sweeping Complaint,34,0,61.64,38.16,130.66,0.9118
+DSNY,Commercial Disposal Complaint,34,0,15.81,0.29,51.19,1.0
+DOT,Outdoor Dining,33,0,272.8,146.57,659.87,0.5455
+HPD,OUTSIDE BUILDING,30,0,420.62,314.31,689.08,0.3
+DEP,Water Maintenance,30,29,2629.24,2629.24,2629.24,0.0
+DEP,Asbestos,29,0,8.33,2.27,15.87,1.0
+DOHMH,Beach/Pool/Sauna Complaint,27,0,172.93,65.29,409.99,0.7778
+DOHMH,Indoor Sewage,27,1,625.91,531.02,933.82,0.1923
+DOHMH,Non-Residential Heat,24,0,1432.61,1440.33,1441.35,0.0
+DOHMH,Construction Lead Dust,22,22,,,,
+DOHMH,Mosquitoes,22,0,0.4,0.43,0.54,1.0
+DOB,Special Natural Area District (SNAD),21,1,2842.46,956.52,8882.21,0.05
+DOB,BEST/Site Safety,20,0,13.54,8.29,36.4,1.0
+DOHMH,Mobile Food Vendor,20,0,1442.27,1440.28,1448.87,0.0
+DOT,Bus Stop Shelter Placement,18,0,141.7,28.64,496.88,0.8333
+OTI,LinkNYC,17,4,387.48,506.18,566.27,0.1538
+DOHMH,Drinking Water,17,4,203.63,151.7,551.84,0.6154
+NYPD,Noise - House of Worship,17,0,1.0,0.63,1.32,1.0
+TLC,For Hire Vehicle Report,16,15,4196.32,4196.32,4196.32,0.0
+NYPD,Disorderly Youth,16,0,4.42,1.87,5.02,1.0
+DHS,Encampment,14,0,454.29,246.35,983.22,0.4286
+DOHMH,Tattooing,13,0,1440.08,1440.09,1440.48,0.0
+DSNY,Abandoned Bike,13,0,71.85,49.49,150.13,0.9231
+HPD,ELEVATOR,11,0,188.89,156.49,344.01,0.5455
+DOHMH,Asbestos,10,1,125.36,45.3,333.93,0.6667
+NYPD,Bike/Roller/Skate,9,0,1.89,1.77,3.0,1.0
+DOHMH,Tobacco or Non-Tobacco Sale,9,9,,,,
+DSNY,Incorrect Data,8,4,88.59,45.47,203.41,0.75
+TLC,Taxi Complaint,7,0,2196.89,1221.54,4710.75,0.0
+DOT,Highway Sign - Damaged,7,0,123.74,116.26,230.67,0.8571
+DSNY,Recycling Basket Complaint,7,0,89.52,77.08,117.86,1.0
+DOHMH,Animal Facility - No Permit,6,1,0.0,0.0,0.0,1.0
+DOHMH,Pet Sale,5,3,0.0,0.0,0.0,1.0
+DOHMH,Illegal Animal Sold,4,3,0.0,0.0,0.0,1.0
+DOHMH,Unsanitary Animal Facility,4,3,0.0,0.0,0.0,1.0
+DSNY,Institution Disposal Complaint,3,0,35.81,29.22,46.06,1.0
+DOB,Cranes and Derricks,3,0,5.77,8.19,8.93,1.0
+TLC,Green Taxi Complaint,3,0,2782.99,1724.11,5630.38,0.3333
+DOB,Dept of Investigations,3,3,,,,
+TLC,Lost Property,3,0,35.76,50.02,55.65,1.0
+DOB,Scaffold Safety,3,0,472.77,84.92,1083.7,0.6667
+DOB,Borough Office,2,0,5648.15,5648.15,5667.07,0.0
+DEP,Waste Water Treatment Plant,2,2,,,,
+NYPD,Posting Advertisement,2,0,0.76,0.76,0.78,1.0
+DOT,Bench,2,0,166.93,166.93,243.08,0.5
+DOHMH,Tanning,2,0,403.87,403.87,406.26,0.0
+DOT,Highway Sign - Dangling,1,0,65.64,65.64,65.64,1.0
+DOHMH,Building Drinking Water Tank,1,0,1754.59,1754.59,1754.59,0.0
+DOT,Bridge Condition,1,0,2502.79,2502.79,2502.79,0.0
+DSNY,Transfer Station Complaint,1,0,47.65,47.65,47.65,1.0
+DOHMH,Window Guard,1,0,24.16,24.16,24.16,1.0
+DOHMH,Cooling Tower,1,0,98.84,98.84,98.84,1.0
+DSNY,Unspecified,1,0,192.69,192.69,192.69,0.0
+DOHMH,Pet Shop,1,0,0.0,0.0,0.0,1.0
+DEP,Plant,1,1,,,,
+DOHMH,Lifeguard,1,0,140.45,140.45,140.45,1.0
+DOT,Leaning Bar,1,0,142.43,142.43,142.43,1.0

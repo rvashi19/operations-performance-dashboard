@@ -1,0 +1,44 @@
+# Pipeline configuration. Secrets and connection details come from environment variables (.env).
+source:
+  name: "NYC 311 Service Requests from 2020 to Present"
+  dataset_id: erm2-nwe9
+  base_url: https://data.cityofnewyork.us/resource
+  metadata_url: https://data.cityofnewyork.us/api/views/erm2-nwe9.json
+  landing_page: https://data.cityofnewyork.us/Social-Services/311-Service-Requests-from-2020-to-Present/erm2-nwe9
+  # Scope: one borough for one calendar year keeps the extract at ~134k records.
+  start_date: "2025-01-01T00:00:00"
+  end_date: "2025-12-31T23:59:59.999"
+  filters:
+    borough: "STATEN ISLAND"
+  columns:
+    - unique_key
+    - created_date
+    - closed_date
+    - agency
+    - agency_name
+    - complaint_type
+    - descriptor
+    - status
+    - due_date
+    - resolution_description
+    - resolution_action_updated_date
+    - borough
+    - incident_zip
+    - community_board
+    - city
+    - latitude
+    - longitude
+    - open_data_channel_type
+    - location_type
+extraction:
+  page_size: 50000
+  timeout_seconds: 120
+  max_retries: 5
+  backoff_seconds: 2
+  incremental_lookback_days: 2   # overlap window re-read on incremental runs; dedup absorbs the overlap
+analytics:
+  # Analytical resolution-time target (NOT an official SLA): the source's due_date is
+  # an "expected update" date and is populated for <1% of records.
+  analytical_target_days: 7
+  category_targets_days: {}     # optional per-complaint-type overrides
+  aging_buckets: [[0, 7, "0-7"], [8, 14, "8-14"], [15, 30, "15-30"], [31, 60, "31-60"], [61, 100000, "60+"]]

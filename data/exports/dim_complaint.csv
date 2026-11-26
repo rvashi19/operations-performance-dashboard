@@ -1,0 +1,835 @@
+complaint_key,complaint_type,descriptor
+835,Noise - Residential,Banging/Pounding
+836,Damaged Tree,Entire Tree Has Fallen Down
+837,Overgrown Tree/Branches,Dead Branches in Tree
+838,HEAT/HOT WATER,APARTMENT ONLY
+839,Noise - Residential,Loud Music/Party
+840,Illegal Parking,Blocked Hydrant
+841,Illegal Parking,Posted Parking Sign Violation
+842,Illegal Fireworks,N/A
+843,Noise - Street/Sidewalk,Loud Music/Party
+844,Blocked Driveway,No Access
+845,Noise - Helicopter,Other
+846,Noise - Residential,Loud Talking
+847,Dirty Condition,Trash
+848,Street Condition,Cave-in
+849,Rodent,Condition Attracting Rodents
+850,Building/Use,Illegal Conversion Of Residential Building/Space
+851,Sewer,Catch Basin Grating Missing (SA4)
+852,PLUMBING,WATER SUPPLY
+853,Sewer,Sewer Backup (Use Comments) (SA)
+854,Root/Sewer/Sidewalk Condition,Trees and Sidewalks Program
+855,Noise - Commercial,Loud Music/Party
+856,Consumer Complaint,Department Store or Megastore
+857,Damaged Tree,Tree Alive - in Poor Condition
+858,PAINT/PLASTER,WALL
+859,Blocked Driveway,Partial Access
+860,Water System,Leak (Use Comments) (WA2)
+861,Overgrown Tree/Branches,Hitting Building
+862,Illegal Parking,Blocked Crosswalk
+863,Illegal Posting,Poster or Sign
+864,Abandoned Vehicle,With License Plate
+865,Building/Use,Zoning - Non-Conforming/Illegal Vehicle Storage
+866,Illegal Parking,Double Parked Blocking Traffic
+867,General Construction/Plumbing,Posted Notice Or Order Removed/Tampered With
+868,Illegal Parking,Blocked Sidewalk
+869,Rodent,Rat Sighting
+870,APPLIANCE,ELECTRIC/GAS RANGE
+871,ELECTRIC,OUTLET/SWITCH
+872,Dead/Dying Tree,Planted More Than 2 Years Ago
+873,Illegal Dumping,Removal Request
+874,Dead Animal,Deer
+875,Non-Emergency Police Matter,Other (complaint details)
+876,Street Condition,Defective Hardware
+877,Illegal Parking,Commercial Overnight Parking
+878,Water System,LOW WATER PRESSURE - WLWP
+879,Street Sign - Dangling,St Name - Attached to Pole
+880,Sewer,Defective/Missing Curb Piece (SC4)
+881,Street Sign - Missing,"No Parking, Standing, Stopping"
+882,Street Condition,Pothole
+883,Residential Disposal Complaint,Waste Set Out Too Early or Too Late
+884,Curb Condition,Broken Curb
+885,Damaged Tree,Branch Cracked and Will Fall
+886,Maintenance or Facility,Graffiti or Vandalism
+887,Consumer Complaint,Home Improvement Contractor
+888,Noise,"Noise, Barking Dog (NR5)"
+889,Food Establishment,Rodents/Insects/Garbage
+890,Lead,Lead Kit Request (Residential) (L10)
+891,Sewer,Catch Basin Clogged/Flooding (Use Comments) (SC)
+892,Water System,Possible Water Main Break (Use Comments) (WA1)
+893,Air Quality,"Air: Odor/Fumes, Vehicle Idling (AD3)"
+894,PLUMBING,TOILET
+895,Sidewalk Condition,Broken Sidewalk
+896,Water System,Hydrant Running (WC3)
+897,Derelict Vehicles,Derelict Vehicles
+898,Damaged Tree,Tree Leaning/Uprooted
+899,ELECTRIC,NO LIGHTING
+900,Dumpster Complaint,Overflowing dumpster
+901,FLOORING/STAIRS,STAIRS
+902,Street Light Condition,Street Light Out
+903,Street Sign - Damaged,Other/Unknown
+904,Sewer,Street Flooding (SJ)
+905,General Construction/Plumbing,Building Shaking/Vibrating/Structural Stability
+906,Obstruction,Cone
+907,Snow or Ice,Roadway
+908,Maintenance or Facility,Structure - Outdoors
+909,Water System,Hydrant Defective (WC2)
+910,Obstruction,Weeds or Grass
+911,Rodent,Mouse Sighting
+912,UNSANITARY CONDITION,MOLD
+913,Unsanitary Animal Pvt Property,Dog
+914,Noise - Commercial,Car/Truck Music
+915,PAINT/PLASTER,CEILING
+916,Rodent,Signs of Rodents
+917,Traffic,Drag Racing
+918,Traffic Signal Condition,Controller
+919,SAFETY,CARBON MONOXIDE DETECTOR
+920,GENERAL,BELL/BUZZER/INTERCOM
+921,Dirty Condition,Dirt or Gravel
+922,Street Sign - Dangling,St Name - Over Intersection
+923,Residential Disposal Complaint,Trash or Recycling Not Secure
+924,Noise - Residential,Loud Television
+925,Illegal Parking,Detached Trailer
+926,Noise - Commercial,Loud Talking
+927,Highway Condition,Pothole - Highway
+928,Highway Condition,Litter
+929,General Construction/Plumbing,Cons - Contrary/Beyond Approved Plans/Permits
+930,Noise - Vehicle,Engine Idling
+931,Street Condition,Guard Rail - Street
+932,ELECTRIC,WIRING
+933,Residential Disposal Complaint,Waste Left in Front of Other Residence
+934,Water System,Hydrant Running Full (WA4)
+935,Sewer,Manhole Overflow (Use Comments) (SA1)
+936,General Construction/Plumbing,Building Permit - None
+937,Street Condition,Wear & Tear
+938,HEAT/HOT WATER,ENTIRE BUILDING
+939,Litter Basket Request,New Basket
+940,Taxi Complaint,Driver Complaint - Passenger
+941,Water Conservation,Water Meter Broken/Leaking - Private Residence (CMR)
+942,Noise - Vehicle,Car/Truck Music
+943,FLOORING/STAIRS,FLOOR
+944,Sanitation Worker or Vehicle Complaint,Inappropriate Behavior
+945,Damaged Tree,Branch or Limb Has Fallen Down
+946,Consumer Complaint,"Bodega, Deli, or Convenience Store"
+947,Illegal Parking,Parking Permit Improper Use
+948,DOOR/WINDOW,WINDOW FRAME
+949,Illegal Parking,Unauthorized Bus Layover
+950,Water System,Hydrant Leaking (WC1)
+951,Residential Disposal Complaint,Mattress or Box Spring Uncovered
+952,Illegal Animal Kept as Pet,Rooster
+953,Litter Basket Request,Replacement Basket
+954,Maintenance or Facility,Garbage or Litter
+955,UNSANITARY CONDITION,PESTS
+956,Sewer,Catch Basin Sunken/Damaged/Raised (SC1)
+957,DOOR/WINDOW,DOOR
+958,PLUMBING,BATHTUB/SHOWER
+959,Building/Use,No Certificate Of Occupancy/Illegal/Contrary To CO
+960,Noise,Noise: Construction Before/After Hours (NM1)
+961,Traffic Signal Condition,Veh Signal Head
+962,Street Sign - Dangling,Stop
+963,Plumbing,Failure To Retain Water/Improper Drainage- (LL103/89)
+964,Illegal Parking,Overnight Commercial Storage
+965,Dead Animal,Opossum
+966,Sidewalk Condition,Sidewalk Violation
+967,Overgrown Tree/Branches,Blocking Street
+968,Consumer Complaint,Used Car Dealer
+969,General Construction/Plumbing,Curb Cut/Driveway/Carport - Illegal
+970,Water Quality,unknown odor/taste in drinking water (QA6)
+971,Dirty Condition,Broken Glass
+972,Illegal Parking,Paper License Plates
+973,Maintenance or Facility,Grass/Weeds
+974,GENERAL,COOKING GAS
+975,Graffiti,Police Report Not Requested
+976,Maintenance or Facility,Hours of Operation
+977,Drug Activity,Use Outside
+978,Mold,Public Complaint - Comm Location
+979,Commercial Disposal Complaint,Waste Disposal
+980,General Construction/Plumbing,"Building - Vacant, Open And Unguarded"
+981,Dead Animal,Cat
+982,New Tree Request,For One Address
+983,Traffic,Chronic Speeding
+984,Dirty Condition,Syringes
+985,Consumer Complaint,Storage Warehouse
+986,Dirty Condition,Debris from Car Accident
+987,WATER LEAK,HEAVY FLOW
+988,Broken Parking Meter,No Receipt
+989,Overgrown Tree/Branches,Hitting Phone/Cable Lines
+990,Residential Disposal Complaint,Trash Not Separated from Recycling
+991,Emergency Response Team (ERT),After Hours Work - Illegal
+992,Dead Animal,Dog
+993,Animal-Abuse,Neglected
+994,Animal-Abuse,No Shelter
+995,Building/Use,Illegal. Commercial Use In Resident Zone
+996,Noise,Noise:  lawn care equipment (NCL)
+997,Graffiti,Graffiti
+998,Hazardous Materials,Chemical Odor (HD1)
+999,Smoking or Vaping,Allowed in Smoke Free Area
+1000,Illegal Parking,License Plate Obscured
+1001,Street Condition,Failed Street Repair
+1002,Street Condition,Blocked - Construction
+1003,Overgrown Tree/Branches,Hitting Power Lines
+1004,Street Condition,"Rough, Pitted or Cracked Roads"
+1005,Street Sign - Dangling,Speed Limit
+1006,Water Quality,"Taste/Odor, Chlorine (QA1)"
+1007,Street Sign - Damaged,Bus Stop
+1008,General Construction/Plumbing,Working Contrary To Stop Work Order
+1009,Street Light Condition,Flood Light Lamp Cycling
+1010,UNSANITARY CONDITION,GARBAGE/RECYCLING STORAGE
+1011,Noise - Street/Sidewalk,Loud Talking
+1012,Water System,Dirty Water (WE)
+1013,OUTSIDE BUILDING,PAVEMENT
+1014,General Construction/Plumbing,Egress - Doors Locked/Blocked/Improper/No Secondary Means
+1015,Sewer,Sewer Odor (SA2)
+1016,Industrial Waste,Waterway-Color (IHD)
+1017,PLUMBING,BASIN/SINK
+1018,Water System,Hyd Valve Box Cover Missing (WV2)
+1019,WATER LEAK,SLOW LEAK
+1020,Lot Condition,Trash
+1021,PLUMBING,STEAM PIPE/RISER
+1022,Traffic Signal Condition,LED Lense
+1023,Street Sign - Missing,Stop
+1024,Animal-Abuse,Tortured
+1025,Traffic Signal Condition,Veh Signal Visor
+1026,Food Establishment,Food Contaminated
+1027,Drug Activity,Use Indoor
+1028,Water System,No Water (WNW)
+1029,Consumer Complaint,Other Store (Non-Food)
+1030,Street Sign - Missing,St Name - Attached to Pole
+1031,Street Light Condition,Bracket Arm Missing
+1032,Noise - Helicopter,News Gathering
+1033,General Construction/Plumbing,Wall/Retaining Wall - Bulging/Cracked
+1034,Overgrown Tree/Branches,Traffic Sign or Signal Blocked
+1035,Electrical,Electrical Wiring Defective/Exposed
+1036,Violation of Park Rules,Obstructing Public Use
+1037,ELECTRIC,LIGHTING
+1038,Illegal Parking,Double Parked Blocking Vehicle
+1039,Street Sign - Dangling,One Way
+1040,GENERAL,CABINET
+1041,Street Light Condition,Lamppost Wire Exposed
+1042,Food Establishment,Food Worker Activity
+1043,UNSANITARY CONDITION,SEWAGE
+1044,Noise - Vehicle,Car/Truck Horn
+1045,Illegal Dumping,Chronic Dumping
+1046,Special Projects Inspection Team (SPIT),Advertising Sign/Billboard/Posters/Flexible Fabric - Illegal
+1047,Food Establishment,Toilet Facility
+1048,SAFETY,SMOKE DETECTOR
+1049,Street Sweeping Complaint,Street Not Swept
+1050,General Construction/Plumbing,Fence - None/Inadequate
+1051,Animal-Abuse,Chained
+1052,Investigations and Discipline (IAD),Investigative Inspection
+1053,Obstruction,Trash or Recycling
+1054,Unsanitary Pigeon Condition,Pigeon Waste
+1055,Noise - Commercial,Banging/Pounding
+1056,Noise,Noise: Alarms (NR3)
+1057,Plumbing,Gas Hook-Up/Piping - Illegal Or Defective
+1058,Encampment,N/A
+1059,DOOR/WINDOW,DOOR FRAME
+1060,Food Establishment,Food Contains Foreign Object
+1061,Missed Collection,Recycling - Paper/Metal/Glass/Rigid Plastic
+1062,GENERAL,SIGNAGE MISSING
+1063,Missed Collection,Recycling - Paper
+1064,Boilers,Boiler - Defective/Inoperative/No Permit
+1065,SAFETY,WINDOW GUARD BROKEN/MISSING
+1066,Consumer Complaint,Tobacco Sales
+1067,Noise,Noise: air condition/ventilation equipment (NV1)
+1068,Traffic Signal Condition,Veh Sgnl Mult Lamps
+1069,GENERAL,VENTILATION SYSTEM
+1070,Missed Collection,Recycling - Metal/Glass/Rigid Plastic
+1071,Missed Collection,Compost
+1072,Traffic Signal Condition,BBS Failure
+1073,Water Quality,Cloudy Or Milky Water (QB1)
+1074,Missed Collection,Trash
+1075,Missed Collection,Bulky Recycling
+1076,Water Quality,"Taste/Odor, Sewer (QA5)"
+1077,Street Sign - Damaged,Do Not Enter
+1078,Day Care,Day Care Facility
+1079,Residential Disposal Complaint,Containers Left Out After Collection
+1080,Consumer Complaint,"Clothing, Shoe, or Accessories Store"
+1081,General Construction/Plumbing,Site Conditions Endangering Workers
+1082,Non-Residential Heat,Inadequate or No Heat
+1083,Snow or Ice,Sidewalk
+1084,WATER LEAK,DAMP SPOT
+1085,School Maintenance,Snow/Ice
+1086,Bus Stop Shelter Complaint,Dirty/Graffiti
+1087,Sidewalk Condition,Sidewalk Grating - Defective
+1088,Food Establishment,Food Spoiled
+1089,Animal in a Park,Dog Off Leash
+1090,Dead Animal,Raccoon
+1091,Food Establishment,Bare Hands in Contact w/ Food
+1092,Street Light Condition,Street Light Lamp Dim
+1093,Dead Animal,Bird
+1094,Sidewalk Condition,Blocked - Construction
+1095,General Construction/Plumbing,Failure To Maintain
+1096,Street Sign - Dangling,"No Parking, Standing, Stopping"
+1097,For Hire Vehicle Report,Driver Report - Non Passenger
+1098,Traffic,Chronic Stoplight Violation
+1099,ELECTRIC,POWER OUTAGE
+1100,Street Sign - Dangling,Other/Unknown
+1101,Consumer Complaint,Laundromat
+1102,Traffic Signal Condition,Veh Signal Lamp
+1103,Sanitation Worker or Vehicle Complaint,Spilled Garbage
+1104,Noise,"Noise, Ice Cream Truck (NR4)"
+1105,Traffic Signal Condition,LED Pedestrian Unit
+1106,General Construction/Plumbing,Vent/Exhaust - Illegal/Improper
+1107,Non-Emergency Police Matter,Trespassing
+1108,Consumer Complaint,"Smoking, Cigar, or Vape Store"
+1109,Animal-Abuse,Other (complaint details)
+1110,Drinking,After Hours - Licensed Est
+1111,Maintenance or Facility,Snow or Ice
+1112,Consumer Complaint,Furniture Store
+1113,APPLIANCE,REFRIGERATOR
+1114,Noise,Noise: Other Noise Sources (Use Comments) (NZZ)
+1115,Street Condition,Plate Condition - Noisy
+1116,Illegal Tree Damage,Roots Damaged
+1117,Animal-Abuse,In Car
+1118,Unleashed Dog,Unleashed Dog in Public
+1119,General Construction/Plumbing,Sidewalk Shed/Pipe Scafford - Inadequate Defective/None
+1120,Traffic Signal Condition,Street Light Feed
+1121,Traffic Signal Condition,Vehicle Signal
+1122,Bus Stop Shelter Placement,New Bus Stop Shelter Placement
+1123,Traffic Signal Condition,Pedestrian Signal
+1124,Dead Animal,Rat or Mouse
+1125,Street Condition,Plate Condition - Shifted
+1126,Real Time Enforcement,Work Without A Permit - Occupied Multiple Dwelling
+1127,Litter Basket Complaint,Misuse
+1128,Street Condition,Line/Marking - After Repaving
+1129,Air Quality,"Air: Smoke, Chimney or vent (AS1)"
+1130,Street Light Condition,Fixture/Luminaire Hanging
+1131,PLUMBING,RADIATOR
+1132,Street Light Condition,Street Light Cycling
+1133,Sewer,Catch Basin Search (SC2)
+1134,Special Projects Inspection Team (SPIT),Illegal Hotel Rooms In Residential Building
+1135,DOOR/WINDOW,WINDOW PANE
+1136,Sidewalk Condition,Defective Hardware
+1137,Noise,Noise: Construction Equipment (NC1)
+1138,Consumer Complaint,Drug Store or Pharmacy
+1139,Consumer Complaint,Garage or Parking Lot
+1140,Street Sign - Missing,One Way
+1141,Bus Stop Shelter Complaint,Broken Glass
+1142,Illegal Posting,Sticker or Decal
+1143,Traffic Signal Condition,Veh Signal Lens
+1144,Water System,Excessive Water In Basement (WEFB)
+1145,Consumer Complaint,Home Heating Oil Company
+1146,Missed Collection,Bulky Trash
+1147,Traffic Signal Condition,Door Lock
+1148,Homeless Person Assistance,Unspecified
+1149,Broken Parking Meter,Out of Order
+1150,Water System,High Water Pressure (WHP)
+1151,BEST/Site Safety,Demolition - Unsafe
+1152,Dead Animal,Squirrel
+1153,Consumer Complaint,Tow Truck Company
+1154,Water System,Hydrant Knocked Over/Missing (WC)
+1155,Plumbing,Plumbing Work - Illegal/No Permit/Standpipe/Sprinkler
+1156,Traffic Signal Condition,Post
+1157,Curb Condition,Defacement
+1158,Dead Animal,Other
+1159,SAFETY,SPRINKLER
+1160,Highway Condition,Dead Animal
+1161,Plumbing,Plumbing-Defective/Leaking/Not Maintained
+1162,Illegal Tree Damage,Unauthorized Tree Pruning
+1163,Street Sign - Missing,Other/Unknown
+1164,Dirty Condition,Dog Waste
+1165,Elevator,Elevator - Multiple Devices On Property
+1166,Traffic Signal Condition,APS
+1167,Food Establishment,No Permit or License
+1168,Street Sign - Damaged,Stop
+1169,Noise - Commercial,Loud Television
+1170,General Construction/Plumbing,Debris - Excessive
+1171,Hazardous Materials,"Unsafe Chemical, Storage (HC1)"
+1172,Elevator,Elevator - Single Device On Property/No Alternate Service
+1173,Residential Disposal Complaint,Storage Area Not Provided
+1174,Illegal Animal Kept as Pet,Farm Animal
+1175,Hazardous Materials,"Oil Spill On Street, Small (HQS)"
+1176,Street Sign - Damaged,St Name - Attached to Pole
+1177,Panhandling,N/A
+1178,Illegal Tree Damage,Trunk Damaged
+1179,Consumer Complaint,"Barber Shop, Beauty Salon, or Nail Salon"
+1180,Consumer Complaint,Used Goods Dealer
+1181,Animal in a Park,Dead Animal
+1182,SAFETY,FIRE ESCAPE
+1183,Animal in a Park,Removing Wildlife
+1184,Missed Collection,Trash and Bulky Trash
+1185,Street Sign - Damaged,"No Parking, Standing, Stopping"
+1186,Litter Basket Complaint,Overflowing
+1187,Bus Stop Shelter Complaint,Lighting
+1188,Consumer Complaint,Employment Agency
+1189,Food Establishment,Kitchen/Food Prep Area
+1190,Construction Lead Dust,Coming into Apartment
+1191,School Maintenance,Other School Condition
+1192,Traffic,Congestion/Gridlock
+1193,Illegal Tree Damage,Branches Damaged
+1194,School Maintenance,Heating Problem
+1195,Industrial Waste,Wastewater Into Catch Basin (IEB)
+1196,PAINT/PLASTER,WINDOW/FRAME
+1197,Consumer Complaint,Supermarket or Grocery Store
+1198,Maintenance or Facility,Structure - Indoors
+1199,Food Establishment,Letter Grading
+1200,Food Establishment,Food Preparation Location
+1201,Street Sign - Dangling,Bus Stop
+1202,Consumer Complaint,Restaurant
+1203,Noise - Helicopter,NYPD
+1204,Water Quality,Defective Water Sampling Station (QSS)
+1205,Street Light Condition,Lamppost Knocked Down
+1206,Emergency Response Team (ERT),Lights From Parking Lot Shining On Building
+1207,Food Establishment,Food Protection
+1208,Tobacco or Non-Tobacco Sale,Banned Tobacco Flavors Sold
+1209,Illegal Animal Kept as Pet,Monkey
+1210,Asbestos,Asbestos Complaint (B1)
+1211,Street Sign - Dangling,School Crossing
+1212,Traffic Signal Condition,Support Bracket
+1213,Obstruction,Merchandise
+1214,Unsanitary Animal Pvt Property,Other Animal
+1215,Unsanitary Animal Pvt Property,Cat
+1216,Graffiti,Police Report Requested
+1217,Illegal Tree Damage,Unauthorized Tree Removal
+1218,Drinking,In Public
+1219,Water Quality,"Taste/Odor, Musty/Stale (QA4)"
+1220,Consumer Complaint,Electronics Store
+1221,Sanitation Worker or Vehicle Complaint,Unsafe Driving
+1222,Street Condition,Crash Cushion Defect
+1223,Highway Condition,Loose Plate
+1224,For Hire Vehicle Complaint,Car Service Company Complaint
+1225,Street Light Condition,Wood Pole Missing
+1226,Indoor Sewage,Sewage Leak
+1227,Water Conservation,"Wasting Faucets,Sinks,Flushometer,Urinal,Etc. - Private Residence (CWR)"
+1228,Noise,Noise: Private Carting Noise (NQ1)
+1229,Dumpster Complaint,Blocking Sidewalk or Street
+1230,Bike/Roller/Skate Chronic,N/A
+1231,Highway Condition,Highway Fence
+1232,Snow or Ice,Snow Tracking
+1233,Street Light Condition,Street Light Lamp Missing
+1234,Sidewalk Condition,Sidewalk Collapsed
+1235,Food Establishment,Food Worker Hygiene
+1236,Street Light Condition,Fixture/Luminaire Out Of Position
+1237,Dumpster Complaint,Small uncovered dumpster
+1238,Highway Condition,Graffiti - Highway
+1239,ELEVATOR,MAINTENANCE
+1240,For Hire Vehicle Complaint,Driver Complaint - Passenger
+1241,OUTSIDE BUILDING,ROOF DOOR/HATCH
+1242,Air Quality,"Air: Dust, Construction/Demolition (AE4)"
+1243,Water Conservation,Water Meter Broken/Leaking - Other (CMO)
+1244,Bus Stop Shelter Complaint,Snow Removal Requested
+1245,Tobacco or Non-Tobacco Sale,Original Labels or Packaging Not Kept
+1246,Special Projects Inspection Team (SPIT),Sign/Awning/Marquee - Illegal/No Permit
+1247,Street Light Condition,Multiple Street Lights Out
+1248,Highway Sign - Damaged,Other/Unknown
+1249,Maintenance or Facility,Recreation Center
+1250,Traffic Signal Condition,Time Switch
+1251,Sewer,Manhole Cover Missing (Emergency) (SA3)
+1252,Street Sign - Missing,Bus Stop
+1253,OUTSIDE BUILDING,GUTTER/LEADER
+1254,Window Guard,Tenant Refusal
+1255,Traffic Signal Condition,Sign
+1256,Traffic Signal Condition,Reflector/Louvre
+1257,Water Conservation,Illegal Use Of A Hydrant (CIN)
+1258,Uprooted Stump,Remove Stump
+1259,Water System,installation of hydrant side post (WHFP)
+1260,Vendor Enforcement,Food Vendor
+1261,OUTSIDE BUILDING,ROOFING
+1262,Consumer Complaint,Construction Labor Provider
+1263,Animal in a Park,Injured Wildlife
+1264,Hazardous Materials,Chemical Spill/Release (HA1)
+1265,Street Sign - Damaged,One Way
+1266,Traffic Signal Condition,Conduit
+1267,Dept of Investigations,Integrity Complaint Referral
+1268,Noise,"Noise, Other Animals (NR6)"
+1269,General Construction/Plumbing,Debris - Falling Or In Danger Of Falling
+1270,Street Light Condition,Fixture/Luminaire Door Open
+1271,Noise - Park,Loud Talking
+1272,Air Quality,Air: Other Air Problem (Use Comments) (AZZ)
+1273,Dead/Dying Tree,Planted Less Than 2 Years Ago
+1274,Damaged Tree,Tree Trunk Split
+1275,Building/Use,SRO - Illegal Work/No Permit/Change In Occupancy/Use
+1276,Street Condition,Dumpster - Construction Waste
+1277,PLUMBING,SEWER
+1278,Wood Pile Remaining,Remove Debris
+1279,PAINT/PLASTER,CABINET
+1280,Lot Condition,Construction Debris
+1281,Commercial Disposal Complaint,Waste Left in Front of Residence
+1282,GENERAL,JANITOR/SUPER
+1283,Water Quality,Clear Water With Other Particles (Use Comments) (QEZ)
+1284,Noise - Commercial,Car/Truck Horn
+1285,Drinking,Underage - Licensed Est
+1286,Sanitation Worker or Vehicle Complaint,Noise
+1287,Consumer Complaint,Home Appliance Store
+1288,General Construction/Plumbing,Adjacent Buildings Not Protected
+1289,PAINT/PLASTER,DOOR/FRAME
+1290,General Construction/Plumbing,Illegal Conversion Of Commercial Bldg/Space To Other Uses
+1291,LinkNYC,WiFi/Internet Not Working/Slow
+1292,Consumer Complaint,E-Cigarette Sales
+1293,Water Quality,"Taste/Odor, Bitter/Metallic (QA3)"
+1294,Broken Parking Meter,Coin or Card Did Not Register
+1295,Consumer Complaint,Car Wash
+1296,Mobile Food Vendor,Food Worker Activity
+1297,Sidewalk Condition,Pedestrian Ramp Defective
+1298,Consumer Complaint,Gas Station Pumps
+1299,Water Conservation,"Wasting Faucets,Sinks,Flushometer,Urinal,Etc. - Other (CWO)"
+1300,Tattooing,Dirty/Inadequate Eqp/Facility
+1301,Street Light Condition,Lamppost Leaning
+1302,Street Light Condition,Flood Light Lamp Dim
+1303,Street Light Condition,Control Panel Damaged
+1304,General Construction/Plumbing,Safety Netting/Guard Rails - Damaged/Inadequate/None (6 Stories/75 Feet Or Less)
+1305,Street Light Condition,Foreign Attachment On Lamppost
+1306,Beach/Pool/Sauna Complaint,Beach/Pool Water
+1307,Maintenance or Facility,Unsecured Facility
+1308,Street Light Condition,Lamppost Damaged
+1309,Drinking Water,Illness Caused by Drinking Water
+1310,Curb Condition,Curb Defect-Metal Protruding
+1311,Noise - Park,Loud Music/Party
+1312,Street Light Condition,Street Light Dayburning
+1313,Animal Facility - No Permit,N/A
+1314,Food Establishment,Permit/License/Certificate
+1315,General Construction/Plumbing,Construction - Change Grade/Watercourse
+1316,Unsanitary Pigeon Condition,Pigeon Odor
+1317,Highway Condition,Cave-in
+1318,LinkNYC,Damaged/Defective
+1319,Traffic Signal Condition,Fixture(S)
+1320,Traffic Signal Condition,Base Door
+1321,PAINT/PLASTER,RADIATOR
+1322,Sanitation Worker or Vehicle Complaint,Idling or Blocking Traffic
+1323,Consumer Complaint,Street Fair Vendor
+1324,LinkNYC,Touchscreen/Button Not Working
+1325,Borough Office,Restroom Non-Complaince With Local Law 79/16
+1326,Consumer Complaint,Stoop Line Stand
+1327,Air Quality,"Air: Odor/Fumes, Restaurant (AD2)"
+1328,Traffic,Truck Route Violation
+1329,Food Establishment,Food Temperature
+1330,Illegal Posting,Flyer or Handbill
+1331,For Hire Vehicle Complaint,Driver Complaint - Non Passenger
+1332,Residential Disposal Complaint,Refrigerator or Freezer Door Attached
+1333,Industrial Waste,Concrete In Catch Basin (IEA)
+1334,Pet Shop,Dogs or Cats Not Sold
+1335,Street Sign - Dangling,Do Not Enter
+1336,Street Sign - Damaged,Speed Limit
+1337,Street Light Condition,Lamppost Base Door/Cover Damaged
+1338,School Maintenance,Unclean Condition
+1339,Green Taxi Complaint,Driver Complaint - Non Passenger
+1340,Traffic Signal Condition,Cable
+1341,Water Quality,"Taste/Odor, Chemical (QA2)"
+1342,Plumbing,Sprinkler System - Inadequate
+1343,Street Light Condition,New Con Ed Service Request
+1344,Food Establishment,Handwashing
+1345,Street Sweeping Complaint,Inadequate Sweeping
+1346,Street Light Condition,Traffic Signal Light
+1347,Incorrect Data,Collection Days
+1348,Consumer Complaint,Gas Station Convenience Store
+1349,Traffic Signal Condition,Warning Signal Lamp
+1350,General Construction/Plumbing,Failure to Comply with Vacate Order
+1351,Violation of Park Rules,Removing Flowers/Plants
+1352,Street Sign - Damaged,Do Not Block the Box
+1353,Urinating in Public,N/A
+1354,Consumer Complaint,Moving Company
+1355,Air Quality,"Air: Dust, Other (Use Comments) (AE5)"
+1356,Industrial Waste,Oil Spill Into Basin/Sewer - Large (IABL)
+1357,Recycling Basket Complaint,Misuse
+1358,Obstruction,Sign
+1359,Vendor Enforcement,Non-Food Vendor
+1360,Hazardous Materials,"Oil Spill On Street, Large (HQL)"
+1361,Street Sign - Dangling,Construction
+1362,Animal in a Park,Domestic Strays
+1363,Special Natural Area District (SNAD),Illegal Tree Removal/Topo. Change in SNAD
+1364,Recycling Basket Complaint,Overflowing
+1365,General Construction/Plumbing,Material Storage - Unsafe
+1366,Street Condition,Line/Marking - Faded
+1367,Broken Parking Meter,Timer Defect - Fast/Fail
+1368,Food Establishment,Food Worker Illness
+1369,Overgrown Tree/Branches,Clear Street Light
+1370,BEST/Site Safety,Safety Netting/Guard Rails - Damaged/Inadequate/None (Over 6 Stories/75 Feet)
+1371,Food Establishment,Pet/Animal
+1372,Illegal Parking,Blocked Bike Lane
+1373,Construction Lead Dust,In Common Areas
+1374,Maintenance or Facility,Broken Glass
+1375,Traffic Signal Condition,Ped Lamp
+1376,Sewer,Culvert Blocked/Needs Cleaning (SE)
+1377,Animal in a Park,Wildlife Sighting
+1378,Violation of Park Rules,Smoking
+1379,Outdoor Dining,Site Setup Condition
+1380,Harboring Bees/Wasps,Beekeeping - Honeybees
+1381,Maintenance or Facility,Rodent Sighting
+1382,Traffic Signal Condition,Junction Box
+1383,Street Light Condition,Flood Light Lamp Out
+1384,Sewer,RAIN GARDEN STRUCTURE (GIRGS)
+1385,Street Condition,Plate Condition - Open
+1386,Industrial Waste,Grease In Sewer/Catch Basin (IDG)
+1387,Consumer Complaint,Cell Phone Store
+1388,School Maintenance,Rodents/Mice
+1389,Noise,Noise: Manufacturing Noise (NK1)
+1390,Food Establishment,Toxic Chemical/Material
+1391,Bus Stop Shelter Complaint,Damaged Other
+1392,Noise,Noise: Jack Hammering (NC2)
+1393,OUTSIDE BUILDING,PORCH/BALCONY
+1394,Poison Ivy,N/A
+1395,Water Quality,"No Sampling Required, Requested Information (QG2)"
+1396,Consumer Complaint,Car Rental
+1397,Industrial Waste,Chemical Spill (IAC)
+1398,Consumer Complaint,Funeral Home
+1399,Scaffold Safety,Suspended (Hanging) Scaffolds - No Pmt/Lic/Dangerous/Accident
+1400,Consumer Complaint,Third-Party Food Delivery Service
+1401,Traffic Signal Condition,Bike Signal
+1402,Traffic Signal Condition,Box Cover
+1403,Illegal Animal Kept as Pet,Other
+1404,Food Establishment,Facility Construction
+1405,Consumer Complaint,Scale Dealer or Repairer
+1406,Sidewalk Condition,Sidewalk Staircase
+1407,Traffic Signal Condition,Push Button
+1408,Violation of Park Rules,Biking/Rollerblading off Path
+1409,Special Projects Inspection Team (SPIT),Sign - In Danger Of Falling
+1410,Animal in a Park,Animal Waste
+1411,GENERAL,MAILBOX
+1412,Bus Stop Shelter Placement,Relocation of Bus Stop Shelter
+1413,Street Condition,Hummock
+1414,Traffic Signal Condition,Ped Multiple Lamps
+1415,Food Establishment,Ventilation
+1416,Food Establishment,Sewage
+1417,Sidewalk Condition,Metal Protruding - Sign Stump
+1418,Noise - House of Worship,Loud Music/Party
+1419,Consumer Complaint,Scrap Metal Processor
+1420,Beach/Pool/Sauna Complaint,Facility Maintenance
+1421,Residential Disposal Complaint,Waste Not Separated
+1422,Consumer Complaint,Tour Guide
+1423,Food Poisoning,1 or 2
+1424,Residential Disposal Complaint,Bin Not Used
+1425,Standing Water,Swimming Pool Cover
+1426,Consumer Complaint,Online or Mail Order
+1427,Standing Water,Puddle on Driveway
+1428,Standing Water,Other - Explain Below
+1429,Street Condition,Unsafe Worksite
+1430,Standing Water,Puddle in Ground
+1431,Violation of Park Rules,Unsafe Use of Playground
+1432,Street Sign - Dangling,Yield
+1433,Street Light Condition,Fire Globe Missing
+1434,Traffic Signal Condition,Underground
+1435,Highway Condition,High Grass
+1436,Traffic Signal Condition,Ver Mesage Sign RTPI
+1437,Day Care,Summer Camp
+1438,Street Sign - Missing,St Name - Over Intersection
+1439,Water Quality,Other Water Problem (Use Comments) (QZZ)
+1440,Highway Condition,Guard Rail - Highway
+1441,Building Drinking Water Tank,Broken or Defective
+1442,Harboring Bees/Wasps,Bees/Wasps - Not a beekeper
+1443,Outdoor Dining,Sidewalk Zone Blocked
+1444,Consumer Complaint,Hotel or Motel
+1445,Standing Water,Swimming Pool - Unmaintained
+1446,Mobile Food Vendor,Equipment
+1447,Abandoned Bike,Chained to Public Property
+1448,Street Light Condition,Fixture/Luminaire Damaged
+1449,Unsanitary Animal Facility,Animal Waste
+1450,Consumer Complaint,Tax Preparation Services
+1451,Street Sign - Damaged,St Name - Over Intersection
+1452,Street Light Condition,Lamppost Missing
+1453,Air Quality,"Air: Smoke, Vehicular (AA4)"
+1454,Street Sign - Damaged,School Crossing
+1455,Consumer Complaint,Games of Chance
+1456,Sidewalk Condition,Dumpster - Construction Waste
+1457,Consumer Complaint,"Gift, Novelty, or Souvenir Store"
+1458,For Hire Vehicle Report,Driver Report - Passenger
+1459,Taxi Complaint,Driver Complaint - Non Passenger
+1460,Traffic Signal Condition,Controller Cabinet
+1461,Standing Water,Basement
+1462,Street Light Condition,Fixture/Luminaire Missing
+1463,For Hire Vehicle Report,Car Service Company Report
+1464,Sidewalk Condition,Canopy Complaint
+1465,Traffic Signal Condition,Sway Bar
+1466,Sidewalk Condition,Cellar Door Defective
+1467,Institution Disposal Complaint,Storage Area Not Provided
+1468,Street Sign - Damaged,Yield
+1469,Traffic Signal Condition,On Messenger
+1470,Street Sign - Missing,Yield
+1471,Disorderly Youth,Playing in Unsuitable Place
+1472,Standing Water,Container - Over 5 Gallons
+1473,Illegal Tree Damage,Bicycle Chained to Tree
+1474,Bus Stop Shelter Complaint,Sign Missing or Defective
+1475,Sidewalk Condition,Blocked - ATM
+1476,Smoking or Vaping,Sign Inadequate
+1477,Water Conservation,Illegal Use Of Hose - Private Residence (CCR)
+1478,Broken Parking Meter,Relocation of Parking Meter
+1479,Violation of Park Rules,Unlicensed Vendors
+1480,Noise - House of Worship,Loud Talking
+1481,Violation of Park Rules,Unauthorized Posting of Signs
+1482,Beach/Pool/Sauna Complaint,Safety Equipment/Signs
+1483,Disorderly Youth,Nuisance/Truant
+1484,Outdoor Dining,Street Zone Blocked
+1485,Street Sign - Missing,School Crossing
+1486,Street Sign - Damaged,Honorary
+1487,Homeless Person Assistance,Non-Chronic
+1488,Traffic Signal Condition,Speed Board Sign
+1489,Violation of Park Rules,BBQ Outside Authorized Area
+1490,School Maintenance,Air Conditioning Problem
+1491,Consumer Complaint,Process Server
+1492,Standing Water,Tires
+1493,Noise,"Noise: Boat(Engine,Music,Etc) (NR10)"
+1494,Street Light Condition,Lamppost Base Door/Cover Missing
+1495,Street Sign - Dangling,Honorary
+1496,Lot Condition,Appliances
+1497,Standing Water,Sewer or Drain
+1498,Illegal Animal Sold,Other
+1499,School Maintenance,Plumbing Problem
+1500,Industrial Waste,Odor In Sewer/Catch Basin (ICB)
+1501,Residential Disposal Complaint,Recycling Posters Not Posted
+1502,Homeless Person Assistance,Chronic
+1503,Street Sign - Missing,Do Not Enter
+1504,Street Sign - Damaged,Construction
+1505,Industrial Waste,Waterway-Sewage (IHA)
+1506,Institution Disposal Complaint,Trash Not Separated from Recycling
+1507,Tobacco or Non-Tobacco Sale,Shisha Sold to Minor
+1508,Tanning,Facility General
+1509,Consumer Complaint,Dry Cleaner
+1510,Consumer Complaint,Mobile Food Vendor
+1511,Special Projects Inspection Team (SPIT),Privately Owned Public Space/Non-Compliance
+1512,Mosquitoes,Large Number of Mosquitoes
+1513,Water Conservation,Rooftank Leak Or Overflow (CKO)
+1514,School Maintenance,Broken Lock
+1515,School Maintenance,Broken Fence
+1516,Green Taxi Complaint,Driver Complaint - Passenger
+1517,Non-Emergency Police Matter,Street Con Game
+1518,Sidewalk Condition,Unsafe Worksite
+1519,Consumer Complaint,Residential Rental Agency
+1520,Water Conservation,Water Meter Stolen/Missing - Private Residence (CLR)
+1521,General Construction/Plumbing,Structural Stability Impacted - New Building Under Construction
+1522,Standing Water,Bird Bath
+1523,Mobile Food Vendor,Milk/Dairy Products
+1524,Consumer Complaint,Shipping Company
+1525,Industrial Waste,Oil Spill Into Basin/Sewer - Small (IABS)
+1526,Street Sign - Damaged,No Idling
+1527,Traffic Signal Condition,Warning Signal
+1528,Cooling Tower,Unsanitary Condition
+1529,Consumer Complaint,Ticket Seller
+1530,Water System,Fire Hydrant Emergency (FHE)
+1531,Sewer,RAIN GARDEN DEBRIS (GIRGD)
+1532,Root/Sewer/Sidewalk Condition,Affecting Sewer or Foundation
+1533,Consumer Complaint,Wholesale Food Market
+1534,General Construction/Plumbing,Safety Inspection-Retaining Walls (May 2005)
+1535,Street Light Condition,Bracket Arm Bent
+1536,Consumer Complaint,Dealer in Products for the Disabled
+1537,Food Establishment,Odor
+1538,Consumer Complaint,Electronics or Appliance Repair
+1539,Air Quality,"Air: Odor, Sweet From Unknown Source (AZ1)"
+1540,Obstruction,Sidewalk Display
+1541,Illegal Animal Kept as Pet,Iguana
+1542,Standing Water,Puddle on Sidewalk
+1543,Hazardous Materials,"Unsafe Chemical, Abandoned (HC2)"
+1544,Mobile Food Vendor,Food Temperature
+1545,Traffic Signal Condition,Door
+1546,Standing Water,Building Foundation
+1547,Consumer Complaint,Landlord or Real Estate Agent
+1548,Bench,Damaged/Bent/Loose/Leaning
+1549,Mobile Food Vendor,Smoke/Odor
+1550,Food Establishment,Dishwashing/Utensils
+1551,Traffic Signal Condition,Wireless
+1552,Tattooing,Tattoo Artist Unlicensed
+1553,Investigations and Discipline (IAD),Plumbing Work - Unlicensed/Illegal/Improper Work In Progress
+1554,Unspecified,Unspecified
+1555,Consumer Complaint,Pool or Billiard Room
+1556,Bus Stop Shelter Complaint,Damaged Leg or Pole Bent
+1557,Indoor Air Quality,Chemical Vapors/Gases/Odors
+1558,Street Sign - Missing,Speed Limit
+1559,Water Quality,"Cloudy Or Milky, Other (Use Comments) (QBZ)"
+1560,Posting Advertisement,Building
+1561,General Construction/Plumbing,Excavation Undermining Adjacent Building
+1562,Unsanitary Animal Facility,Animal Odor
+1563,Lost Property,Electronics/Phones
+1564,Tattooing,No Consent Form
+1565,Traffic Signal Condition,In Conduit
+1566,Traffic Signal Condition,Dust Cover
+1567,Bus Stop Shelter Complaint,Damaged Bench
+1568,Consumer Complaint,Jewelry Store
+1569,Air Quality,"Air: Odor, Nail Salon (AD8)"
+1570,Lifeguard,Not Certified
+1571,Obstruction,Donation Collection Bin
+1572,Cranes and Derricks,Crane/Suspension Scaffold - No Permit/License/Cert./Unsafe/Illegal
+1573,Traffic Signal Condition,Mast Arm
+1574,Consumer Complaint,Hardware Store
+1575,Construction Lead Dust,Common Areas and Apartment
+1576,Transfer Station Complaint,Odor
+1577,Consumer Complaint,Pet Store
+1578,Traffic Signal Condition,CMU Communication
+1579,Cannabis Retailer,Unlicensed
+1580,Cannabis Retailer,Sales to Minors Under 21
+1581,Broken Parking Meter,Graffiti
+1582,Cannabis Retailer,Suspicious Activity
+1583,Outdoor Dining,Barrier Condition
+1584,Highway Condition,Unsafe Worksite
+1585,Traffic Signal Condition,Weather Head
+1586,Illegal Animal Sold,Turtle Under 4 inches Long
+1587,Mobile Food Vendor,Insects / Pests
+1588,Outdoor Dining,Restaurant Status
+1589,Mobile Food Vendor,Food Source/Protection
+1590,Mobile Food Vendor,Permit/License/Certificate
+1591,Traffic Signal Condition,Telco Connection Blk
+1592,Traffic Signal Condition,Ped Flasher
+1593,Street Sign - Damaged,Street Cleaning - ASP
+1594,Cannabis Retailer,Too Close to a School
+1595,Traffic Signal Condition,In Post Base
+1596,Bench,Missing
+1597,Consumer Complaint,Airline
+1598,Highway Sign - Damaged,Exit/Route
+1599,Traffic Signal Condition,Foundation
+1600,Sidewalk Condition,Sidewalk Grating - Missing
+1601,Consumer Complaint,Pawnbroker
+1602,Beach/Pool/Sauna Complaint,Beach/Pool/Sauna Unpermitted
+1603,Highway Sign - Damaged,Electronic Sign - Overhead
+1604,Broken Parking Meter,Credit Card Stuck in Meter
+1605,Highway Condition,Sign Blocked by Tree
+1606,LinkNYC,Graffiti/Dirty Condition
+1607,Highway Sign - Dangling,Exit/Route
+1608,Lost Property,Other
+1609,Lost Property,Bag/Wallet
+1610,Pet Sale,Animals Sold From Residence
+1611,Highway Condition,Painted Line/Marking
+1612,Street Sign - Dangling,Do Not Block the Box
+1613,Bike/Roller/Skate,N/A
+1614,Leaning Bar,Damaged/Bent/Loose/Leaning
+1615,Street Condition,Plate Condition - Anti-Skid
+1616,Water Quality,"Oil, Grease In Water (QD1)"
+1617,Plant,DRY WEATHER DISCHARGE - DWD
+1618,Construction Safety Enforcement,CSC - Monitoring Tracking
+1619,Street Sign - Dangling,Detour
+1620,Street Sign - Damaged,Detour
+1621,Water Conservation,Water Meter Stolen/Missing - Other (CLO)
+1622,Cannabis Retailer,Product Concerns
+1623,Snow or Ice,Pedestrian Feature
+1624,General Construction/Plumbing,Smoking Ban - Smoking on Construction Site
+1625,Street Sign - Missing,Construction
+1626,Street Light Condition,Wood Pole Leaning
+1627,Street Light Condition,Wood Pole Damaged
+1628,Street Light Condition,Glassware Hanging
+1629,Street Light Condition,Multiple St Lts Dayburning
+1630,Indoor Air Quality,Sewage Odor
+1631,Bridge Condition,Pothole
+1632,Indoor Air Quality,Other (Explain Below)
+1633,Asbestos,N/A
+1634,Indoor Air Quality,Ventilation
+1635,Indoor Air Quality,Dry Cleaning Vapors (PERC)
+1636,Food Poisoning,3 or More
+1637,Indoor Air Quality,Dust from Construction
+1638,Indoor Air Quality,Unsafe Mold Cleanup
+1639,Indoor Air Quality,Human Feces
+1640,Mold,Loft Building
+1641,For Hire Vehicle Complaint,Driver Report - Non Passenger
+1642,Special Projects Inspection Team (SPIT),Adult Establishment
+1643,Sewer Maintenance,Backup
+1644,Water Maintenance,Fire Hydrant Leaning/Missing
+1645,Sewer Maintenance,Manhole Cover Missing
+1646,Water Maintenance,Fire Hydrant Valve Box
+1647,Water Maintenance,Leak
+1648,Water Maintenance,Water Main Break
+1649,Sewer Maintenance,Manhole Overflow
+1650,Water Maintenance,Water in Basement
+1651,Water Maintenance,Fire Hydrant Defective
+1652,Air Quality,Dust from Construction
+1653,Noise,Manufacturing Business/Plant
+1654,Sewer Maintenance,Flooding on Street
+1655,Sewer Maintenance,Odor
+1656,Sewer Maintenance,Catch Basin Clogged
+1657,Water Maintenance,Low Pressure
+1658,Lead,Lead Kit
+1659,PLUMBING,BOILER
+1660,Industrial Waste,Odor
+1661,Sewer Maintenance,Culvert
+1662,Waste Water Treatment Plant,Noise
+1663,For Hire Vehicle Report,Equipment Complaint
+1664,Water Maintenance,No Water
+1665,Sewer Maintenance,Catch Basin Grate Missing
+1666,Water Maintenance,Fire Hydrant Running
+1667,Industrial Waste,Wastewater
+1668,DOOR/WINDOW,DOOR TO DUMBWAITER

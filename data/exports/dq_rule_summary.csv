@@ -1,0 +1,15 @@
+rule_id,rule_name,category,severity,treatment,issues,affected_records
+DQ001,Duplicate request ID,duplicate,high,deduplicate,0,0
+DQ002,Exact duplicate record,duplicate,medium,deduplicate,0,0
+DQ003,Missing request ID,completeness,critical,quarantine,0,0
+DQ004,Missing created date,completeness,critical,quarantine,0,0
+DQ005,Closed status without closed date,consistency,high,exclude_from_resolution_metrics,62,62
+DQ006,Closed before created,validity,high,exclude_from_resolution_metrics,24,24
+DQ007,Invalid timestamp,validity,high,quarantine,0,0
+DQ008,Unexpected future timestamp,validity,high,exclude_from_resolution_metrics,0,0
+DQ009,Missing complaint category,completeness,medium,retain,0,0
+DQ010,Missing agency,completeness,medium,manual_review,0,0
+DQ011,Open status with closed date,consistency,medium,manual_review,191,191
+DQ012,Undocumented status value,validity,medium,manual_review,0,0
+DQ013,Extreme resolution duration,plausibility,low,retain,459,459
+DQ014,Missing geography,completeness,low,retain,731,731

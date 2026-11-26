@@ -1,0 +1,9 @@
+metric,ord,raw_value,clean_value,abs_diff,pct_diff
+Total requests,1,134348.0,134348.0,0.0,0.0
+Closed requests,2,132019.0,132019.0,0.0,0.0
+Open requests (backlog at reporting date),3,2329.0,2329.0,0.0,0.0
+Resolution rate,4,0.9827,0.9827,0.0,0.0
+Average resolution (hours),5,275.8118,275.68,-0.1318,-0.048
+Median resolution (hours),6,15.2342,15.3,0.0658,0.432
+P90 resolution (hours),7,335.9721,335.38,-0.5921,-0.176
+Within 7-day analytical target,8,0.8302,0.8302,0.0,-0.002
