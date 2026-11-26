@@ -17,6 +17,7 @@ data-entry error, because the published data contains no evidence of who or what
 | DQ011 Open status with closed date | 191 | DOB (154), DOT signals/lights (29), HPD (6), DOHMH (2) | Count as open; manual review | resolution time, closure rate, backlog |
 | DQ013 Duration > 365 days | 459 | DPR trees/sidewalks (313), DOB (104) | Retain + flag | average (+34 h), P90 |
 | DQ014 No ZIP and no coordinates | 731 | Highway Condition (529), Traffic (150) | Retain as "Unknown" geography | geographic breakdowns only |
+| DQ015 Ambiguous local time (DST) | 34 requests (41 timestamps) | All on 2025-11-01/02 fall-back night (NYPD most) | Retain + flag | durations crossing the hour (±1 h) |
 | DQ001–DQ004, DQ007–DQ010, DQ012 | 0 | — | — | — |
 
 Separate from the rules, two **timestamp-precision observations** affect how comparable agencies are (section 6).
@@ -49,6 +50,9 @@ timestamps with no UTC offset. A request created in the second 01:xx hour and cl
 before it opened, and the negative gaps (−4 to −40 minutes) are under one hour, as expected. *Confirmed by timing;
 how the source system stores time zones is a hypothesis.*
 
+**DQ015 cross-check (QA review):** the new ambiguous-timestamp rule flags these same records, plus 31
+other requests created or closed in that hour that did not produce negative durations.
+
 **b) DOT Street Light Condition, 18 records, status Pending, closed ≈24 h (−24.02 to −24.13 h) before creation (confirmed pattern).**
 The offset is almost exactly one day and appears only on still-pending street-light requests whose resolution text
 points to DOT's own tracking site. *Hypothesis:* the closed date belongs to a linked or prior street-light ticket for
@@ -71,7 +75,7 @@ are 1.7–8.9 h negative, with no clear pattern.
 * **Metrics affected.** In a naive report these records would contribute durations even though the work is not
   finished. Removing them changes DOB's median resolution from 512 h to 560 h (+9.2%) and average from 1,757 h to
   1,804 h (+2.6%).
-* **Remediation.** Treat as open (the status field is the documented state of the request), exclude the stale
+* **Remediation.** Treat as open (the status field is the documented state of the request), exclude its
   closed date, and route to DOB for manual review. These are the 191 *needs_manual_review* records.
 
 ## 4. DQ013: Resolution longer than 365 days (459, retained)
@@ -87,8 +91,9 @@ are 1.7–8.9 h negative, with no clear pattern.
 
 ## 5. DQ014: Missing geography (731, retained)
 
-* **Pattern (confirmed).** 529 are *Highway Condition* and 150 are *Traffic* (DOT, NYPD, DSNY). These are on
-  expressways, located by highway name rather than by address, so the published extract has no ZIP or coordinates.
+* **Pattern (confirmed).** 529 are *Highway Condition* and 150 are *Traffic* (DOT, NYPD, DSNY).
+  *Hypothesis:* these are on expressways and are located by highway name rather than by address, which would
+  explain the missing ZIP and coordinates; the location-capture process is not visible in the data.
 * **Treatment.** Retained under "Unknown" geography. Only ZIP-level breakdowns are affected, and those cover 0.54%
   of records.
 

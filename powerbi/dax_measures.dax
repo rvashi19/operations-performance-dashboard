@@ -47,11 +47,15 @@ CALCULATE (
 
 Net Backlog Change = [Requests Created] - [Requests Closed]
 
+// Exact calendar-month rolling average: total created in the 3 calendar months ending with the month in context,
+// divided by 3. Returns BLANK until three complete months of the calendar exist (no partial-window averages).
 Requests Created 3M Rolling Avg =
-AVERAGEX (
-    DATESINPERIOD ( DimDate[full_date], MAX ( DimDate[full_date] ), -3, MONTH ),
-    [Requests Created]
-) * 30.4   // daily average x average days per month
+VAR LastDay = MAX ( Calendar[full_date] )
+VAR Window = DATESINPERIOD ( Calendar[full_date], LastDay, -3, MONTH )
+VAR FirstMonthStart = DATE ( YEAR ( MINX ( ALL ( Calendar ), Calendar[full_date] ) ), MONTH ( MINX ( ALL ( Calendar ), Calendar[full_date] ) ), 1 )
+RETURN
+    IF ( EDATE ( EOMONTH ( LastDay, -1 ) + 1, -2 ) >= FirstMonthStart,
+         DIVIDE ( CALCULATE ( [Requests Created], Window ), 3 ) )
 
 // ---------- Backlog ----------
 // Historical backlog at the end of the period in context (works on any date granularity).

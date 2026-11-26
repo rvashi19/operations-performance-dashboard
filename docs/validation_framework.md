@@ -16,6 +16,11 @@ Adding a rule of an existing kind (for example, another `not_null` column) is a 
 
 ## Rules and why each is (or isn't) an error
 
+Rules flagged `excludes_from_resolution: true` in the YAML (DQ005, DQ006, DQ008, DQ011) remove the record's
+duration from resolution metrics while keeping it in volume counts. `cleaning.py` reads the flag; nothing is hardcoded.
+
+Rules flagged  in the YAML (DQ005, DQ006, DQ008, DQ011) remove the record's duration from resolution metrics; cleaning reads the flag, nothing is hardcoded.
+
 | ID | Check | Severity | Treatment | Rationale from the documentation |
 |---|---|---|---|---|
 | DQ001 | Same `unique_key`, different content | high | deduplicate (keep latest `:updated_at`) | `unique_key` is documented as unique; multiple versions come from re-extraction after an update |
@@ -32,6 +37,8 @@ Adding a rule of an existing kind (for example, another `not_null` column) is a 
 | DQ012 | Status not in the documented list | medium | manual review | Unknown state can't be classified |
 | DQ013 | Duration > 365 days | low | retain + flag | Plausible for capital work (trees, sidewalks); shown as a sensitivity check |
 | DQ014 | No ZIP **and** no coordinates | low | retain as "Unknown" geography | Only geographic breakdowns are affected |
+| DQ015 | Local timestamp in the repeated (fall-back) or skipped (spring-forward) DST hour of America/New_York | low | retain + flag | The source publishes floating local times, so the true instant is uncertain by up to 1 h |
+| DQ015 | Local timestamp in the repeated (fall-back) or skipped (spring-forward) DST hour of America/New_York | low | retain + flag | The source publishes floating local times, so the true instant is uncertain by up to 1 h |
 
 ## Treatment policy (src/transformation/cleaning.py)
 
@@ -56,5 +63,5 @@ decision is written to `analytics.cleaning_audit` with its run id.
 
 ## Latest results
 
-134,348 inspected · 132,900 valid · 1,448 affected (1.078%) · 1,467 issues · pass rate 98.922% · 191 for manual
+134,348 rows / 134,348 requests inspected · 1,479 affected (1.101%) · 1,508 issues · record- and request-level pass rate 98.899% · 191 for manual
 review. See `reports/data_quality_report.md`.

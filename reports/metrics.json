@@ -1,24 +1,27 @@
 {
-  "run_id": "6429c255-b84f-48bb-8a71-91db31e92a3c",
+  "run_id": "0413c6d5-d438-4361-898b-7cc49b5a0160",
   "reporting_date": "2026-11-25",
-  "window": [
+  "window_half_open": [
     "2025-01-01 00:00:00",
-    "2025-12-31 23:59:59.999000"
+    "2026-01-01 00:00:00"
   ],
   "records_inspected": 134348,
-  "records_with_issues": 1448,
-  "total_issues": 1467,
-  "affected_pct": 0.01077797957543097,
-  "pass_rate": 0.9892220204245691,
+  "records_affected": 1479,
+  "record_pass_rate": 0.9889912763866973,
+  "requests_inspected": 134348,
+  "requests_affected": 1479,
+  "request_pass_rate": 0.9889912763866973,
+  "total_issues": 1508,
   "manual_review_records": 191,
-  "duplicate_ids": 0,
-  "exact_duplicates": 0,
+  "duplicate_request_ids_in_snapshot": 0,
+  "records_without_id": 0,
   "kpis_clean": {
     "total_requests": 134348,
     "closed_requests": 132019,
     "open_requests": 2329,
+    "unknown_status_requests": 0,
     "resolution_rate": 0.9826644237353738,
-    "avg_resolution_hours": 275.6784875446188,
+    "avg_resolution_hours": 275.67848754461875,
     "median_resolution_hours": 15.297,
     "p90_resolution_hours": 335.376,
     "resolution_sample": 131951,
@@ -28,11 +31,62 @@
     "total_requests": 134348,
     "closed_requests": 132019,
     "open_requests": 2329,
+    "unknown_status_requests": 0,
     "resolution_rate": 0.9826644237353738,
-    "avg_resolution_hours": 275.81175835679187,
+    "avg_resolution_hours": 275.8117583567919,
     "median_resolution_hours": 15.234166666666667,
     "p90_resolution_hours": 335.9720833333334,
     "resolution_sample": 132148,
     "within_target_rate": 0.8302206616823562
+  },
+  "reconciliation": {
+    "total_requests": {
+      "python": 134348,
+      "sql": 134348.0
+    },
+    "closed_requests": {
+      "python": 132019,
+      "sql": 132019.0
+    },
+    "open_requests": {
+      "python": 2329,
+      "sql": 2329.0
+    },
+    "unknown_status_requests": {
+      "python": 0,
+      "sql": 0.0
+    },
+    "avg_resolution_hours": {
+      "python": 275.67848754461875,
+      "sql": 275.68
+    },
+    "median_resolution_hours": {
+      "python": 15.297,
+      "sql": 15.3
+    },
+    "p90_resolution_hours": {
+      "python": 335.376,
+      "sql": 335.38
+    },
+    "raw_avg_resolution_hours": {
+      "python": 275.8117583567919,
+      "sql": 275.8118
+    },
+    "raw_median_resolution_hours": {
+      "python": 15.234166666666667,
+      "sql": 15.2342
+    },
+    "requests_inspected": {
+      "python": 134348,
+      "sql": "134348"
+    },
+    "requests_affected": {
+      "python": 1479,
+      "sql": "1479"
+    },
+    "rolling_3m_last_month": {
+      "python": 10801.333333333334,
+      "sql": 10801.33
+    }
   }
 }

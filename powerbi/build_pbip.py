@@ -6,7 +6,10 @@ Semantic model: import mode over data/exports/*.csv (refresh in Power BI Desktop
 """
 import json
 import shutil
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "powerbi"
@@ -39,12 +42,15 @@ TABLES = {
                                ("closed_at", DT), ("created_month", S)]),
     "DQRules": ("dq_rule_summary", [("rule_id", S), ("rule_name", S), ("category", S), ("severity", S),
                                     ("treatment", S), ("issues", I), ("affected_records", I)]),
+    "DQSummary": ("dq_run_summary", [("records_inspected", I), ("records_affected", I), ("record_pass_rate", D),
+                                      ("requests_inspected", I), ("requests_affected", I), ("request_pass_rate", D),
+                                      ("total_issues", I)]),
     "MissingValues": ("dq_missing_values", [("column", S), ("missing", I), ("missing_pct", D)]),
-    "RawVsClean": ("raw_vs_clean", [("metric", S), ("ord", I), ("raw_value", D), ("clean_value", D),
+    "RawVsClean": ("raw_vs_clean", [("metric", S), ("ord", I), ("unit", S), ("raw_value", D), ("clean_value", D),
                                     ("abs_diff", D), ("pct_diff", D)]),
     "RawVsCleanAgency": ("raw_vs_clean_agency", [("agency_code", S), ("raw_avg_hours", D), ("clean_avg_hours", D),
                                                  ("avg_pct_diff", D), ("raw_median_hours", D),
-                                                 ("clean_median_hours", D)]),
+                                                 ("clean_median_hours", D), ("median_pct_diff", D)]),
     "CleaningAudit": ("cleaning_audit_summary", [("action", S), ("rule_ids", S), ("records", I)]),
 }
 
@@ -54,10 +60,25 @@ MEASURES = {
         ("Total Requests", "COUNTROWS ( Requests )", "#,0", "Volume"),
         ("Closed Requests", "CALCULATE ( [Total Requests], Requests[status_group] = \"Closed\" )", "#,0", "Volume"),
         ("Open Requests", "CALCULATE ( [Total Requests], Requests[status_group] = \"Open\" )", "#,0", "Volume"),
+        ("Unknown Status Requests", "CALCULATE ( [Total Requests], Requests[status_group] = \"Unknown\" )", "#,0", "Volume"),
         ("Resolution Rate", "DIVIDE ( [Closed Requests], [Total Requests] )", "0.0%", "Volume"),
         ("Requests Created", "[Total Requests]", "#,0", "Flow"),
         ("Requests Closed", "CALCULATE ( COUNTROWS ( Requests ), USERELATIONSHIP ( Requests[closed_date_key], Calendar[date_key] ), NOT ISBLANK ( Requests[effective_closed_at] ), Requests[closed_date_key] IN VALUES ( Calendar[date_key] ) )", "#,0", "Flow"),
         ("Net Backlog Change", "[Requests Created] - [Requests Closed]", "#,0", "Flow"),
+        ("Requests Created 3M Rolling Avg",
+         "VAR LastDay = MAX ( Calendar[full_date] ) "
+         "VAR FirstDay = MINX ( ALL ( Calendar ), Calendar[full_date] ) "
+         "VAR WindowStart = EDATE ( EOMONTH ( LastDay, -1 ) + 1, -2 ) "
+         "RETURN IF ( WindowStart >= DATE ( YEAR ( FirstDay ), MONTH ( FirstDay ), 1 ), "
+         "DIVIDE ( CALCULATE ( [Requests Created], DATESINPERIOD ( Calendar[full_date], LastDay, -3, MONTH ) ), 3 ) )",
+         "#,0.0", "Flow"),
+        ("Backlog At Period End",
+         "VAR AsOf = MAX ( Calendar[full_date] ) + 1 "
+         "RETURN CALCULATE ( COUNTROWS ( Requests ), REMOVEFILTERS ( Calendar ), Requests[created_at] < AsOf, "
+         "Requests[status_group] <> \"Unknown\", "
+         "NOT ( Requests[status_group] = \"Closed\" && ISBLANK ( Requests[effective_closed_at] ) ), "
+         "ISBLANK ( Requests[effective_closed_at] ) || Requests[effective_closed_at] >= AsOf )",
+         "#,0", "Backlog"),
         ("Avg Resolution Hours", "AVERAGE ( Requests[resolution_hours] )", "#,0.0", "Resolution"),
         ("Median Resolution Hours", "MEDIAN ( Requests[resolution_hours] )", "#,0.0", "Resolution"),
         ("P90 Resolution Hours", "PERCENTILE.INC ( Requests[resolution_hours], 0.9 )", "#,0", "Resolution"),
@@ -65,10 +86,9 @@ MEASURES = {
         ("Avg Resolution Days", "DIVIDE ( [Avg Resolution Hours], 24 )", "#,0.0", "Resolution"),
         ("P90 Resolution Days", "DIVIDE ( [P90 Resolution Hours], 24 )", "#,0.0", "Resolution"),
         ("Resolution Sample", "CALCULATE ( COUNTROWS ( Requests ), Requests[include_in_resolution_metrics] = TRUE () )", "#,0", "Resolution"),
-        ("Within 7-Day Target %", "DIVIDE ( CALCULATE ( COUNTROWS ( Requests ), Requests[within_analytical_target] = TRUE () ), [Resolution Sample] )", "0.0%", "Resolution"),
-        ("Records With DQ Issues", "CALCULATE ( COUNTROWS ( Requests ), Requests[dq_issue_count] > 0 )", "#,0", "Data Quality"),
-        ("DQ Pass Rate", "1 - DIVIDE ( [Records With DQ Issues], [Total Requests] )", "0.00%", "Data Quality"),
-        ("DQ Affected %", "DIVIDE ( [Records With DQ Issues], [Total Requests] )", "0.00%", "Data Quality"),
+        ("Within 7-Day Analytical Target %", "DIVIDE ( CALCULATE ( COUNTROWS ( Requests ), Requests[within_analytical_target] = TRUE () ), [Resolution Sample] )", "0.0%", "Resolution"),
+        ("Published Requests With Issues", "CALCULATE ( COUNTROWS ( Requests ), Requests[dq_issue_count] > 0 )", "#,0", "Data Quality"),
+        ("Published Requests With Issues %", "DIVIDE ( [Published Requests With Issues], [Total Requests] )", "0.00%", "Data Quality"),
         ("Pending Manual Review", "CALCULATE ( COUNTROWS ( Requests ), Requests[needs_manual_review] = TRUE () )", "#,0", "Data Quality"),
     ],
     "OpenRequests": [
@@ -76,8 +96,12 @@ MEASURES = {
         ("Overdue Open Requests", "CALCULATE ( COUNTROWS ( OpenRequests ), OpenRequests[overdue_vs_analytical_target] = TRUE () )", "#,0", None),
         ("Avg Backlog Age Days", "AVERAGE ( OpenRequests[age_days] )", "#,0", None),
     ],
-    "Backlog": [("Month-End Backlog", "SUM ( Backlog[backlog] )", "#,0", None),
-                ("Year-End Backlog", "CALCULATE ( SUM ( Backlog[backlog] ), Backlog[month_end] = MAX ( Backlog[month_end] ) )", "#,0", None)],
+    "Backlog": [("Month-End Backlog (SQL view)", "SUM ( Backlog[backlog] )", "#,0", None)],
+    # run-level headline rates from the pipeline (explicit denominators; not affected by report slicers)
+    "DQSummary": [("Record-Level DQ Pass Rate", "MAX ( DQSummary[record_pass_rate] )", "0.00%", None),
+                  ("Request-Level DQ Pass Rate", "MAX ( DQSummary[request_pass_rate] )", "0.00%", None),
+                  ("Records Inspected", "MAX ( DQSummary[records_inspected] )", "#,0", None),
+                  ("Requests Affected", "MAX ( DQSummary[requests_affected] )", "#,0", None)],
     "DQIssues": [("DQ Issues", "COUNTROWS ( DQIssues )", "#,0", None)],
 }
 
@@ -86,13 +110,22 @@ RELATIONSHIPS = [  # from (many), to (one), active
     (R, "closed_date_key", "Calendar", "date_key", False),
     (R, "agency_code", "Agency", "agency_code", True),
     ("Backlog", "agency_code", "Agency", "agency_code", True),
-    ("OpenRequests", "agency_code", "Agency", "agency_code", True),
-    ("DQIssues", "agency", "Agency", "agency_code", True),
+    # OpenRequests and DQIssues hang off Requests, so EVERY slicer (agency, complaint, ZIP, status, month)
+    # propagates to them through one unambiguous path.
+    ("OpenRequests", "unique_key", R, "unique_key", True),
+    ("DQIssues", "unique_key", R, "unique_key", True),
     ("RawVsCleanAgency", "agency_code", "Agency", "agency_code", True),
 ]
 
 
-ROW_FILTER = {"Calendar": "each [year] = 2025"}
+def _m_dt(iso):
+    d = __import__("datetime").datetime.fromisoformat(iso)
+    return f"#datetime({d.year}, {d.month}, {d.day}, 0, 0, 0)"
+
+
+_SRC = __import__("src.config", fromlist=["settings"]).settings()["source"]
+# Calendar limited to the configured (half-open) reporting window, read from config/settings.yaml
+ROW_FILTER = {"Calendar": f"each [full_date] >= {_m_dt(_SRC['start_date'])} and [full_date] < {_m_dt(_SRC['end_date'])}"}
 
 
 def m_expr(csv, cols, row_filter=None):
@@ -154,7 +187,8 @@ DISPLAY = {"complaint_type": "Complaint type", "unique_key": "Request ID", "rule
            "recommended_treatment": "Treatment", "resolution_status": "Resolution status", "metric": "Metric",
            "raw_value": "Raw", "clean_value": "Cleaned", "abs_diff": "Difference", "pct_diff": "% change",
            "Median Resolution Days": "Median days", "P90 Resolution Days": "P90 days",
-           "Within 7-Day Target %": "Within 7 days", "Total Requests": "Requests"}
+           "Within 7-Day Analytical Target %": "Within 7 days", "unit": "Unit", "median_pct_diff": "Median % change",
+           "avg_pct_diff": "Average % change", "raw_value": "Raw", "Total Requests": "Requests"}
 
 
 def lit(v):
@@ -291,9 +325,9 @@ class Page:
             _merge(objs, "grid", {"rowPadding": lit(3)})
         single = {"visualType": vtype, "projections": proj, "prototypeQuery": query, "drillFilterOtherVisuals": True,
                   "objects": objs}
-        if vtype == "tableEx":
-            single["columnProperties"] = {q["Name"]: {"displayName": DISPLAY[q["Name"].split(".", 1)[1]]}
-                                          for q in select if q["Name"].split(".", 1)[1] in DISPLAY}
+        if vtype != "card":  # friendly display names for tables and legends; cards keep full measure names
+            single["columnProperties"] = {q["Name"]: {"displayName": DISPLAY[q["Name"].split(".", 1)[1].rstrip(")")]}
+                                          for q in select if q["Name"].split(".", 1)[1].rstrip(")") in DISPLAY}
         vc = {"background": [{"properties": {"show": lit(True), "color": color("#FFFFFF"), "transparency": lit(0)}}],
               "border": [{"properties": {"show": lit(True), "color": color("#E1E4E8"), "radius": lit(8)}}],
               "dropShadow": [{"properties": {"show": lit(False)}}],
@@ -311,9 +345,15 @@ class Page:
 
     @staticmethod
     def _topn(col, measure, n):
-        sub = {"Version": 2, "From": [{"Name": "f", "Entity": col.table, "Type": 0}],
+        # the measure may live in another table than the column (e.g. Agency column ranked by a Requests measure)
+        frm = [{"Name": "f", "Entity": col.table, "Type": 0}]
+        msrc = "f"
+        if measure.table != col.table:
+            frm.append({"Name": "m", "Entity": measure.table, "Type": 0})
+            msrc = "m"
+        sub = {"Version": 2, "From": frm,
                "Select": [{"Column": {"Expression": {"SourceRef": {"Source": "f"}}, "Property": col.prop}, "Name": "field"}],
-               "OrderBy": [{"Direction": 2, "Expression": {"Measure": {"Expression": {"SourceRef": {"Source": "f"}}, "Property": measure.prop}}}],
+               "OrderBy": [{"Direction": 2, "Expression": {"Measure": {"Expression": {"SourceRef": {"Source": msrc}}, "Property": measure.prop}}}],
                "Top": n}
         return {"name": f"topn_{col.prop}", "type": "TopN", "howCreated": 1,
                 "expression": {"Column": {"Expression": {"SourceRef": {"Entity": col.table}}, "Property": col.prop}},
@@ -355,10 +395,10 @@ def build_report():
 
     # 1 ---------------------------------------------------------------- Executive Overview
     p = Page("Executive Overview", "Executive Overview",
-             "Staten Island 311 service requests created in 2025  |  Source: NYC Open Data (erm2-nwe9), extracted 2026-11-25")
+             "Staten Island 311 requests created in 2025 | NYC Open Data erm2-nwe9 | 7-day target is analytical, not an official SLA | Current backlog = open at extraction")
     p.slicers()
     p.cards(["Total Requests", "Resolution Rate", "Median Resolution Hours", "Avg Resolution Hours",
-             "Within 7-Day Target %", "Current Backlog"])
+             "Within 7-Day Analytical Target %", "Current Backlog"])
     (x1, w1), (x2, w2), (x3, w3) = cols(5, 3, 4)
     h = BODY_B - BODY_Y
     p.visual("lineChart", x1, BODY_Y, w1, h, {"Category": [C("Calendar", "year_month")],
@@ -375,7 +415,7 @@ def build_report():
     p = Page("Operational Performance", "Operational Performance",
              "Resolution time uses valid closures only. The 7-day target is an analytical benchmark: the source has no official SLA.")
     p.slicers()
-    p.cards(["Median Resolution Days", "Avg Resolution Days", "P90 Resolution Days", "Within 7-Day Target %", "Resolution Sample"])
+    p.cards(["Median Resolution Days", "Avg Resolution Days", "P90 Resolution Days", "Within 7-Day Analytical Target %", "Resolution Sample"])
     (x1, w1), (x2, w2), (x3, w3) = cols(1, 1.25, 1)
     (ya, ha), (yb, hb) = rows(2)
     p.visual("clusteredBarChart", x1, BODY_Y, w1, BODY_B - BODY_Y, {"Category": [C("Agency", "agency_code")],
@@ -383,7 +423,7 @@ def build_report():
              title="Median and P90 resolution days by agency", sort=(M("Median Resolution Days"), True), objects=dict(legend_top))
     p.visual("tableEx", x2, BODY_Y, w2, BODY_B - BODY_Y,
              {"Values": [C(R, "complaint_type"), M("Total Requests"), M("Median Resolution Days"),
-                         M("P90 Resolution Days"), M("Within 7-Day Target %")]},
+                         M("P90 Resolution Days"), M("Within 7-Day Analytical Target %")]},
              title="Resolution by complaint type", sort=(M("Total Requests"), True))
     p.visual("lineChart", x3, ya, w3, ha, {"Category": [C("Calendar", "year_month")], "Y": [M("Median Resolution Hours")]},
              title="Median resolution hours by month created", sort=(C("Calendar", "year_month"), False))
@@ -394,38 +434,40 @@ def build_report():
 
     # 3 ---------------------------------------------------------------- Backlog & Demand
     p = Page("Backlog & Demand", "Backlog & Demand",
-             "Current backlog = open at extraction (all aged 60+ days because the window ended 2025-12-31). "
-             "Month-end backlog = 2025 requests not validly closed by each month end.")
+             "CURRENT backlog = open at extraction (all 60+ days old: window ended 2025-12-31). "
+             "HISTORICAL backlog = 2025-created requests not validly closed at each month end (no pre-2025 carry-over).")
     p.slicers()
-    p.cards(["Current Backlog", "Overdue Open Requests", "Avg Backlog Age Days", "Year-End Backlog"])
+    p.cards(["Current Backlog", "Overdue Open Requests", "Avg Backlog Age Days", "Backlog At Period End"])
     (x1, w1), (x2, w2) = cols(1, 1)
     (ya, ha), (yb, hb) = rows(2)
     (x2a, w2a), (x2b, w2b) = cols(1, 1, x0=x2, width=w2)
     p.visual("lineChart", x1, BODY_Y, w1, BODY_B - BODY_Y,
-             {"Category": [C("Backlog", "month_end")], "Series": [C("Backlog", "agency_code")], "Y": [M("Month-End Backlog")]},
-             title="Month-end backlog, top 6 agencies", sort=(C("Backlog", "month_end"), False),
-             top_n=(C("Backlog", "agency_code"), M("Month-End Backlog"), 6), objects=dict(legend_top))
+             {"Category": [C("Calendar", "year_month")], "Series": [C("Agency", "agency_code")], "Y": [M("Backlog At Period End")]},
+             title="Historical backlog at month end, top 6 agencies", sort=(C("Calendar", "year_month"), False),
+             top_n=(C("Agency", "agency_code"), M("Backlog At Period End"), 6), objects=dict(legend_top))
     p.visual("clusteredColumnChart", x2a, ya, w2a, ha, {"Category": [C("OpenRequests", "aging_bucket")], "Y": [M("Current Backlog")]},
-             title="Open requests by age (days)", objects=dict(datalabels))
+             title="Current backlog by age (days)", objects=dict(datalabels))
     p.visual("clusteredBarChart", x2b, ya, w2b, ha, {"Category": [C("OpenRequests", "complaint_type")], "Y": [M("Current Backlog")]},
-             title="Top open complaint types", sort=(M("Current Backlog"), True),
+             title="Current backlog: top complaint types", sort=(M("Current Backlog"), True),
              top_n=(C("OpenRequests", "complaint_type"), M("Current Backlog"), 8), objects=dict(datalabels))
     p.visual("clusteredColumnChart", x2, yb, w2, hb, {"Category": [C("OpenRequests", "incident_zip")], "Y": [M("Current Backlog")]},
-             title="Open requests by ZIP code", sort=(M("Current Backlog"), True), objects={**datalabels, **orange})
+             title="Current backlog by ZIP code", sort=(M("Current Backlog"), True), objects={**datalabels, **orange})
     pages.append(p)
 
     # 4 ---------------------------------------------------------------- Data Quality Monitoring
     p = Page("Data Quality Monitoring", "Data Quality Monitoring",
-             "14 validation rules (config/validation_rules.yaml). Click a rule or agency to filter the issue detail table.")
+             "15 rules (config/validation_rules.yaml). Pass rates are run-level with explicit denominators; "
+             "click a rule or agency to filter the issue detail table.")
     p.slicers()
-    p.cards(["DQ Pass Rate", "Records With DQ Issues", "DQ Issues", "Pending Manual Review"])
+    p.cards(["Record-Level DQ Pass Rate", "Request-Level DQ Pass Rate", "DQ Issues", "Pending Manual Review"])
     (ya, ha), (yb, hb) = rows(2)
     (x1, w1), (x2, w2), (x3, w3) = cols(1, 1, 1)
     p.visual("clusteredBarChart", x1, ya, w1, ha, {"Category": [C("DQIssues", "rule_name")], "Series": [C("DQIssues", "severity")],
                                                   "Y": [M("DQ Issues")]},
              title="Issues by rule and severity", sort=(M("DQ Issues"), True), objects=dict(legend_top))
-    p.visual("clusteredBarChart", x2, ya, w2, ha, {"Category": [C("Agency", "agency_code")], "Y": [M("DQ Affected %")]},
-             title="% of records affected by agency", sort=(M("DQ Affected %"), True), objects=dict(datalabels))
+    p.visual("clusteredBarChart", x2, ya, w2, ha, {"Category": [C("Agency", "agency_code")], "Y": [M("Published Requests With Issues %")]},
+             title="% of published requests with issues, by agency", sort=(M("Published Requests With Issues %"), True),
+             objects=dict(datalabels))
     p.visual("clusteredBarChart", x3, ya, w3, ha, {"Category": [C("MissingValues", "column")], "Y": [C("MissingValues", "missing_pct", 0)]},
              title="Missing values % by field", sort=(C("MissingValues", "missing_pct", 0), True), objects=dict(orange))
     (x1, w1), (x2, w2) = cols(1, 2)
@@ -444,23 +486,23 @@ def build_report():
              "Raw = naive report on the extract; Cleaned = documented treatment policy. Same formulas, only the treatment differs.")
     (ya, ha), (yb, hb) = rows(2, y0=SL_Y)
     (x1, w1), (x2, w2) = cols(1, 1)
-    p.visual("tableEx", x1, ya, w1, ha, {"Values": [C("RawVsClean", "metric"), C("RawVsClean", "raw_value"),
+    p.visual("tableEx", x1, ya, w1, ha, {"Values": [C("RawVsClean", "metric"), C("RawVsClean", "unit"), C("RawVsClean", "raw_value"),
                                                    C("RawVsClean", "clean_value"), C("RawVsClean", "abs_diff"),
                                                    C("RawVsClean", "pct_diff")]},
              title="Raw vs cleaned KPIs")
     p.visual("clusteredBarChart", x2, ya, w2, ha, {"Category": [C("RawVsCleanAgency", "agency_code")],
-                                                  "Y": [C("RawVsCleanAgency", "avg_pct_diff", 0)]},
-             title="% change in average resolution time after cleaning, by agency",
-             sort=(C("RawVsCleanAgency", "avg_pct_diff", 0), True), objects=dict(datalabels))
+                                                  "Y": [C("RawVsCleanAgency", "median_pct_diff", 0), C("RawVsCleanAgency", "avg_pct_diff", 0)]},
+             title="% change in median and average resolution after cleaning, by agency",
+             sort=(C("RawVsCleanAgency", "median_pct_diff", 0), True), objects={**datalabels, **legend_top})
     (x1, w1), (x2, w2), (x3, w3) = cols(1, 0.8, 1.4)
     p.visual("clusteredBarChart", x1, yb, w1, hb, {"Category": [C("DQRules", "rule_name")], "Y": [C("DQRules", "affected_records", 0)]},
              title="Records affected by rule", sort=(C("DQRules", "affected_records", 0), True), objects=dict(datalabels))
     p.visual("clusteredBarChart", x2, yb, w2, hb, {"Category": [C("CleaningAudit", "action")], "Y": [C("CleaningAudit", "records", 0)]},
              title="Cleaning treatment summary", objects={**datalabels, **orange})
     p.text("Key findings\n"
-           "- Every headline KPI moved by less than 0.5% after cleaning.\n"
-           "- DOB median resolution rises 9.2% (512 h to 560 h): 154 open DOB requests carried stale closed dates.\n"
-           "- 24 negative durations: DST fall-back hour (NYPD) and a ~24 h offset on DOT street-light tickets.\n"
+           "- Every Staten Island headline KPI moved by less than 0.5% after cleaning.\n"
+           "- DOB median rises 9.2% (512 h to 560 h): 154 open DOB requests carried closed dates, mostly ~0 h after creation.\n"
+           "- 24 negative durations: 3 NYPD records fall in the DST fall-back hour; 18 DOT street-light tickets show a ~24 h offset (cause unconfirmed).\n"
            "- 62 DHS requests closed without a closed date, all Jan 9 - May 5 2025.\n"
            "- 459 cases over 365 days retained; they add ~34 h to the average.\n"
            "\n"

@@ -68,7 +68,7 @@ DDL: `sql/schema/01_schemas_and_tables.sql` · Views: `sql/transformations/02_re
 Prerequisites: Python 3.11+, Docker Desktop, Git.
 
 ```powershell
-git clone <your-repo-url> operations-performance-dashboard
+git clone https://github.com/rvashi19/operations-performance-dashboard.git
 ```
 ```powershell
 cd operations-performance-dashboard
@@ -141,7 +141,7 @@ Root cause evidence queries are in `sql/validation/root_cause_queries.sql`. EXPL
 
 ## Data quality framework
 
-There are 14 rules in `config/validation_rules.yaml`: duplicates, missing ID, created date, agency and category,
+There are 15 rules in `config/validation_rules.yaml`: duplicates, missing ID, created date, agency and category,
 closed status without date, closed before created, invalid and future timestamps, status/closed-date conflicts,
 undocumented statuses, extreme durations, and missing geography. Each issue stores the record, rule, category,
 severity, column, original value, explanation, detection time, run id, recommended treatment and resolution status.
@@ -164,7 +164,7 @@ See [docs/validation_framework.md](docs/validation_framework.md).
 * NYPD (36% of volume) resolves in a median of 1.4 h. DOB takes 23 days, with 34% of requests within 7 days.
 * Closures trailed demand in 10 of 12 months. The biggest overdue category is DPR root/sewer/sidewalk (455 open).
 
-**Data quality**: 1.078% of records affected (1,448 records, 1,467 issues); pass rate **98.92%**. No duplicates
+**Data quality**: 1,479 of 134,348 records affected (1.101%, 1,508 issues); record-level and request-level pass rate **98.899%** (identical because every request has exactly one row). No duplicates
 or missing IDs.
 * 62 DHS homeless-assistance requests closed without a closure date, all created Jan 9 – May 5 2025.
 * 24 negative durations: 3 NYPD on the 2025-11-02 DST fall-back hour; 18 DOT street-light tickets offset by about
@@ -173,12 +173,24 @@ or missing IDs.
 * 89% of DOB closures are stamped at midnight (day precision); 42% of DOHMH requests close in 0 seconds.
 
 **Raw vs cleaned**: every headline KPI changed by less than 0.5% (average −0.05%, median +0.43%). DOB median
-resolution +9.2% (512 → 560 h). Retained cases over 365 days add 34 h to the city-wide average.
+resolution +9.2% (512 → 560 h). Retained cases over 365 days add 34 h to the Staten Island average.
 See [reports/kpi_comparison.md](reports/kpi_comparison.md).
 
 Reports: [executive summary](reports/executive_summary.md) · [data quality](reports/data_quality_report.md) ·
 [root cause analysis](reports/root_cause_analysis.md) · [KPI comparison](reports/kpi_comparison.md) ·
 [KPI definitions](docs/kpi_definitions.md).
+
+## QA review
+
+A full quality review is documented in [reports/qa_review.md](reports/qa_review.md). It covers 20 issues, each with
+a fix and a regression test. Main changes: a full refresh now replaces the *current snapshot*, so records removed at
+the source disappear from analytics while history stays in `raw`; updated records are history, not duplicates; the
+scope (borough plus half-open date window) is enforced in snapshots and checkpoints; record-level and
+request-level data quality rates are separated; undocumented statuses are grouped as `Unknown`; a DST
+ambiguity rule was added; rolling averages are exact calendar months; and publication (data, views, run metadata)
+is one transaction. Evidence-backed findings are in [reports/business_findings.md](reports/business_findings.md).
+Interview material is in [docs/interview_study_guide.md](docs/interview_study_guide.md), and a proposed supply chain
+adaptation in [docs/supply_chain_application.md](docs/supply_chain_application.md).
 
 ## Power BI
 
@@ -211,7 +223,7 @@ tests/             unit + integration tests (pytest)
 * No official SLA can be computed. The 7-day target is an analytical assumption.
 * Historical backlog covers only the 2025 cohort and is reconstructed from current close dates.
 * Root causes marked "hypothesis" need agency systems to confirm.
-* Power BI visuals are specified but untested.
+* Power BI values were reconciled against SQL with DAX queries in Desktop (see `powerbi/validation/validation_checklist.md`); clicking slicers by hand and a drill-through page are still manual items.
 
 ## Future improvements
 

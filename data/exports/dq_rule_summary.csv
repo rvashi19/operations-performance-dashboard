@@ -13,3 +13,4 @@ DQ011,Open status with closed date,consistency,medium,manual_review,191,191
 DQ012,Undocumented status value,validity,medium,manual_review,0,0
 DQ013,Extreme resolution duration,plausibility,low,retain,459,459
 DQ014,Missing geography,completeness,low,retain,731,731
+DQ015,Ambiguous or nonexistent local timestamp,validity,low,retain,41,34

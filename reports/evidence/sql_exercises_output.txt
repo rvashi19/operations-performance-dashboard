@@ -1,0 +1,136 @@
+=== E1 requests and median hours per channel ===
+ channel | requests | median_h 
+---------+----------+----------
+ ONLINE  |    63705 |      5.6
+ PHONE   |    39151 |     27.6
+ UNKNOWN |    17171 |    117.9
+ MOBILE  |    14243 |      1.9
+ OTHER   |       78 |      1.3
+(5 rows)
+
+=== E2 busiest weekday per agency (top 5 agencies) ===
+ agency_code | day_name | requests 
+-------------+----------+----------
+ NYPD        | Saturday |     8153
+ DSNY        | Tuesday  |     4021
+ DOT         | Tuesday  |     3017
+ DEP         | Tuesday  |     2209
+ HPD         | Monday   |     2123
+(5 rows)
+
+=== E3 month-over-month change in created requests ===
+  month  | created_requests | mom_change 
+---------+------------------+------------
+ 2025-01 |            10128 |           
+ 2025-02 |             9158 |       -970
+ 2025-03 |            10565 |       1407
+ 2025-04 |            10710 |        145
+ 2025-05 |            12242 |       1532
+ 2025-06 |            12117 |       -125
+ 2025-07 |            13363 |       1246
+ 2025-08 |            12158 |      -1205
+ 2025-09 |            11503 |       -655
+ 2025-10 |            11515 |         12
+ 2025-11 |             9874 |      -1641
+ 2025-12 |            11015 |       1141
+(12 rows)
+
+=== E4 complaint types with >= 500 requests and within-target rate below 70 percent ===
+        complaint_type         | requests | pct_within_7d 
+-------------------------------+----------+---------------
+ Root/Sewer/Sidewalk Condition |     1701 |           3.7
+ Street Light Condition        |     3974 |          15.1
+ Building/Use                  |     1271 |          17.4
+ Dead/Dying Tree               |     1473 |          30.1
+ General Construction/Plumbing |     2131 |          36.8
+ Sidewalk Condition            |     1868 |          44.4
+ DOOR/WINDOW                   |      753 |          44.8
+ FLOORING/STAIRS               |      573 |          48.1
+ PLUMBING                      |     1393 |          51.8
+ UNSANITARY CONDITION          |     2548 |          52.0
+ WATER LEAK                    |      630 |          53.5
+ Highway Condition             |      530 |          54.4
+ Consumer Complaint            |      635 |          55.2
+ PAINT/PLASTER                 |      865 |          59.0
+ ELECTRIC                      |      679 |          59.6
+ Graffiti                      |      738 |          59.9
+ Overgrown Tree/Branches       |     2770 |          62.4
+ Damaged Tree                  |     3880 |          63.8
+(18 rows)
+
+=== E5 data quality issues per rule as share of all issues ===
+ rule_id | issues | pct_of_issues 
+---------+--------+---------------
+ DQ014   |    731 |          48.5
+ DQ013   |    459 |          30.4
+ DQ011   |    191 |          12.7
+ DQ005   |     62 |           4.1
+ DQ015   |     41 |           2.7
+ DQ006   |     24 |           1.6
+(6 rows)
+
+=== E6 agencies whose open backlog share exceeds the overall share ===
+ agency_code | open_requests | total_requests | pct_open 
+-------------+---------------+----------------+----------
+ TLC         |            38 |            133 |    28.57
+ EDC         |            83 |            316 |    26.27
+ OTI         |             4 |             17 |    23.53
+ DPR         |           846 |          11729 |     7.21
+ DOHMH       |           236 |           3497 |     6.75
+ DOB         |           154 |           4456 |     3.46
+ DSNY        |           464 |          23878 |     1.94
+(7 rows)
+
+=== E7 top 3 ZIPs by median resolution, min 1000 resolved, with DENSE_RANK ===
+ incident_zip | resolved | median_h | rnk 
+--------------+----------+----------+-----
+ 10301        |    14882 |     20.8 |   1
+ 10312        |    16520 |     19.8 |   2
+ 10308        |     6183 |     19.8 |   3
+(3 rows)
+
+=== E8 requests flagged by more than one rule ===
+ unique_key |    rules    
+------------+-------------
+ 63922507   | DQ006,DQ011
+ 63924345   | DQ006,DQ011
+ 64036923   | DQ006,DQ011
+ 64346311   | DQ006,DQ011
+ 64863907   | DQ006,DQ011
+(5 rows)
+
+ requests_with_multiple_rules 
+------------------------------
+                           22
+(1 row)
+
+=== E9 cumulative closures in 2025 (running total) ===
+  month  | closed_requests | cumulative_closed 
+---------+-----------------+-------------------
+ 2025-01 |            8833 |              8833
+ 2025-02 |            8543 |             17376
+ 2025-03 |            9969 |             27345
+ 2025-04 |            9892 |             37237
+ 2025-05 |           11518 |             48755
+ 2025-06 |           11741 |             60496
+ 2025-07 |           12441 |             72937
+ 2025-08 |           11280 |             84217
+ 2025-09 |           11013 |             95230
+ 2025-10 |           11586 |            106816
+ 2025-11 |            9732 |            116548
+ 2025-12 |           11091 |            127639
+(12 rows)
+
+=== E10 percentage of each agency volume that is in its single largest complaint type ===
+ agency_code |        complaint_type         |   n   | pct_of_agency 
+-------------+-------------------------------+-------+---------------
+ DOB         | General Construction/Plumbing |  2131 |          47.8
+ DEP         | Water System                  |  5865 |          47.6
+ DOT         | Street Condition              |  6497 |          38.6
+ NYPD        | Illegal Parking               | 17456 |          36.3
+ DPR         | Damaged Tree                  |  3880 |          33.1
+ DOHMH       | Rodent                        |  1130 |          32.3
+ DSNY        | Missed Collection             |  6397 |          26.8
+ HPD         | HEAT/HOT WATER                |  3187 |          26.8
+(8 rows)
+

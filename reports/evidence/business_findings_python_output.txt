@@ -1,0 +1,41 @@
+F1 mean vs median
+  n=131,951 mean=275.7 median=15.30 p90=335.4
+  slowest 1% (1,319 requests) hold 31.0% of all resolution hours
+  slowest 5% (6,597 requests) hold 74.8% of all resolution hours
+  slowest 10% (13,195 requests) hold 86.2% of all resolution hours
+  mean if slowest 1% removed: 192.0 h
+
+F2 DOB median before/after
+  raw DOB durations n=4,456 median=512.43 h
+  without DQ011 n=4,302 median=559.67 h (+9.2%)
+  removed DQ011 records: n=154, share with duration < 1 h = 72.1%, median = 0.00 h
+
+F3 DHS missing closed dates
+         size  sum
+month             
+2025-01    10    8
+2025-02     5    3
+2025-03    27   26
+2025-04    24   21
+2025-05    15    4
+2025-06    29    0
+2025-07    60    0
+2025-08    55    0
+2025-09    50    0
+2025-10    41    0
+2025-11    30    0
+2025-12    23    0
+  Jan-May: 62 of 81 DHS requests lack a closed date; Jun-Dec: 0
+
+F4 long-duration sensitivity
+  >365 days: 458 requests; mean all 275.7 h vs excluding 241.3 h; median 15.30 vs 15.02
+
+F6 aggregate vs agency DQ rate
+  overall request-level affected rate: 1.10%
+             requests  pct_affected
+agency_code                        
+DHS               369         17.34
+TLC               133          7.52
+DOB              4456          5.77
+EDC               316          4.75
+DPR             11729          2.67

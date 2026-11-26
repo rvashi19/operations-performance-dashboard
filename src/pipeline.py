@@ -6,6 +6,7 @@
     python -m src.pipeline --generate-reports   rebuild views, CSV exports and markdown reports
 """
 import argparse
+import json
 import logging
 import os
 import sys
@@ -31,6 +32,12 @@ def _client(s):
                          e["max_retries"], e["backoff_seconds"], os.getenv("SOCRATA_APP_TOKEN") or None)
 
 
+def scope_key(settings) -> str:
+    src = settings["source"]
+    return json.dumps({"dataset": src["dataset_id"], "filters": src["filters"], "start": src["start_date"],
+                       "end": src["end_date"]}, sort_keys=True)
+
+
 def validate_and_publish(conn, inspected: pd.DataFrame, run_id, now, settings, rules, publish=True) -> dict:
     issues = Validator(rules, now).run(inspected)
     loader.write_rules(conn, rules)
@@ -47,40 +54,45 @@ def validate_and_publish(conn, inspected: pd.DataFrame, run_id, now, settings, r
     return {**summary, "loaded": loaded, "rejected": len(inspected) - loaded}
 
 
+def _dq_metrics(m: dict) -> dict:
+    return {k: m[k] for k in ("records_inspected", "records_affected", "requests_inspected", "requests_affected")}         | {"issues_detected": m["total_issues"]}
+
+
 def run(mode: str, engine=None, client=None, raw_file=None) -> str:
     settings, rules = config.settings(), config.validation_rules()
     src = settings["source"]
-    window = (src["start_date"], src["end_date"])
+    window = (src["start_date"], src["end_date"])          # half-open: start <= created < end
+    key = scope_key(settings)
     engine = engine or get_engine()
     init_db(engine)
     run_id, started = str(uuid.uuid4()), datetime.now().astimezone()
     with engine.begin() as conn:
-        loader.start_run(conn, run_id, mode, started, window)
-    log.info("run_id=%s mode=%s started", run_id, mode)
-    metrics = {}
+        loader.start_run(conn, run_id, mode, started, window, key)
+    log.info("run_id=%s mode=%s scope=%s started", run_id, mode, key)
     try:
         if mode == "generate-reports":
             from src.reporting.reports import generate_all
             build_views(engine)
             generate_all(engine)
+            with engine.begin() as conn:
+                loader.finish_run(conn, run_id, "succeeded", datetime.now().astimezone())
         elif mode == "validate-only":
             with engine.begin() as conn:
-                inspected = loader.read_staging(conn, *window)
+                inspected = loader.read_snapshot(conn)
                 if inspected.empty:
-                    raise RuntimeError("staging is empty; run --full-refresh first")
+                    raise RuntimeError("no current snapshot; run --full-refresh first")
                 m = validate_and_publish(conn, inspected, run_id, started, settings, rules, publish=False)
-            metrics = {"records_extracted": 0, "records_loaded": 0, "records_rejected": 0,
-                       "issues_detected": m["total_issues"]}
+                loader.finish_run(conn, run_id, "succeeded", datetime.now().astimezone(), records_extracted=0,
+                                  records_loaded=0, records_rejected=0, **_dq_metrics(m))
         else:
             client = client or _client(settings)
-            since = None
+            since = prev_cp = None
             if mode == "incremental":
                 with engine.connect() as conn:
-                    cp = loader.last_checkpoint(conn)
-                if cp is None:
-                    raise RuntimeError("no successful previous run; use --full-refresh first")
-                since = (cp - timedelta(days=settings["extraction"]["incremental_lookback_days"])) \
-                    .astimezone(timezone.utc).replace(tzinfo=None).isoformat(timespec="seconds")
+                    prev_cp = loader.last_checkpoint(conn, key)
+                if prev_cp is None:
+                    raise RuntimeError("no successful load for the configured scope; run --full-refresh first")
+                since = (prev_cp - timedelta(days=settings["extraction"]["incremental_lookback_days"]))                     .astimezone(timezone.utc).replace(tzinfo=None).isoformat(timespec="seconds")
             where = client.build_where(*window, src["filters"], since)
             out = raw_file or config.ROOT / "data" / "raw" / f"nyc311_{mode}_{started:%Y%m%dT%H%M%S}.jsonl.gz"
             ext = client.extract_to_file(where, src["columns"], out)
@@ -88,24 +100,28 @@ def run(mode: str, engine=None, client=None, raw_file=None) -> str:
             log.info("extracted rows=%s file=%s", len(batch), out)
             if mode == "full-refresh" and batch.empty:
                 raise RuntimeError("full refresh returned 0 records; existing data left untouched")
-            # One transaction: raw + staging + issues + analytics either all commit or all roll back.
+            batch_rows = batch.drop(columns="payload")
+            cp = batch["source_updated_at"].max() if not batch.empty else None
+            cp = prev_cp if cp is None or pd.isna(cp) else cp.to_pydatetime()
+            # One transaction: raw history + snapshot + issues + analytics + views + run metadata.
             with engine.begin() as conn:
                 loader.load_raw_and_staging(conn, batch, run_id, ext["extracted_at"])
-                stored = loader.read_staging(conn, *window)
-                inspected = pd.concat([stored[~stored["record_hash"].isin(batch["record_hash"])],
-                                       batch.drop(columns="payload")], ignore_index=True)
+                if mode == "full-refresh":
+                    inspected = batch_rows                      # the complete extract IS the snapshot
+                else:
+                    prev = loader.read_snapshot(conn)
+                    changed = set(batch_rows["unique_key"].dropna())
+                    keep = prev[prev["unique_key"].isna() | ~prev["unique_key"].isin(changed)]
+                    keep = keep[~keep["record_hash"].isin(batch_rows["record_hash"])]
+                    inspected = pd.concat([keep, batch_rows], ignore_index=True)
+                loader.replace_snapshot(conn, inspected, run_id)
                 m = validate_and_publish(conn, inspected, run_id, started, settings, rules)
-            cp = batch["source_updated_at"].max() if not batch.empty else None
-            metrics = {"records_extracted": len(batch), "records_loaded": m["loaded"],
-                       "records_rejected": m["rejected"], "issues_detected": m["total_issues"],
-                       "raw_file": str(out), "checkpoint_updated_at": None if pd.isna(cp) else cp.to_pydatetime()}
-            if mode == "incremental" and metrics["checkpoint_updated_at"] is None:
-                with engine.connect() as conn:  # nothing changed: carry the previous checkpoint forward
-                    metrics["checkpoint_updated_at"] = loader.last_checkpoint(conn)
-            build_views(engine)
-        with engine.begin() as conn:
-            loader.finish_run(conn, run_id, "succeeded", datetime.now().astimezone(), **metrics)
-        log.info("run_id=%s succeeded %s", run_id, metrics)
+                build_views(conn)
+                metrics = {"records_extracted": len(batch), "records_loaded": m["loaded"],
+                           "records_rejected": m["rejected"], "raw_file": str(out),
+                           "checkpoint_updated_at": cp, **_dq_metrics(m)}
+                loader.finish_run(conn, run_id, "succeeded", datetime.now().astimezone(), **metrics)
+            log.info("run_id=%s succeeded %s", run_id, metrics)
         return run_id
     except Exception as exc:
         log.exception("run_id=%s failed", run_id)

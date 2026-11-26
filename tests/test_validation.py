@@ -104,13 +104,13 @@ def test_multiple_issues_counted_once_in_affected_records(rules, now, make_df):
     df, issues = run(rules, now, make_df, [rec(closed="2025-02-01T00:00:00", zip_=None, lat=None, lon=None), rec(key="2")])
     assert len(issues) >= 2
     s = summarize(df, issues)
-    assert s["records_with_issues"] == 1 and s["pass_rate"] == 0.5
+    assert s["records_affected"] == 1 and s["record_pass_rate"] == 0.5 and s["request_pass_rate"] == 0.5
 
 
 def test_empty_dataset(rules, now, make_df):
     df, issues = run(rules, now, make_df, [])
     assert df.empty and issues.empty
-    assert summarize(df, issues)["pass_rate"] is None
+    assert summarize(df, issues)["record_pass_rate"] is None
 
 
 def test_malformed_record_missing_fields_and_bad_numbers(rules, now, make_df):

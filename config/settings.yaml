@@ -6,8 +6,11 @@ source:
   metadata_url: https://data.cityofnewyork.us/api/views/erm2-nwe9.json
   landing_page: https://data.cityofnewyork.us/Social-Services/311-Service-Requests-from-2020-to-Present/erm2-nwe9
   # Scope: one borough for one calendar year keeps the extract at ~134k records.
+  # Half-open window: start_date <= created_date < end_date (no millisecond boundary gaps).
   start_date: "2025-01-01T00:00:00"
-  end_date: "2025-12-31T23:59:59.999"
+  end_date: "2026-01-01T00:00:00"
+  # Socrata publishes floating local timestamps (no offset); they are NYC local time.
+  source_timezone: America/New_York
   filters:
     borough: "STATEN ISLAND"
   columns:
@@ -41,4 +44,7 @@ analytics:
   # an "expected update" date and is populated for <1% of records.
   analytical_target_days: 7
   category_targets_days: {}     # optional per-complaint-type overrides
+  # Labels used when a NULL reporting attribute is normalised (audited in analytics.cleaning_audit).
+  unknown_labels: {agency: UNKNOWN, complaint_type: Unknown, descriptor: Unspecified, borough: Unspecified,
+                   incident_zip: Unknown, community_board: Unknown}
   aging_buckets: [[0, 7, "0-7"], [8, 14, "8-14"], [15, 30, "15-30"], [31, 60, "31-60"], [61, 100000, "60+"]]

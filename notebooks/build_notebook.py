@@ -39,7 +39,7 @@ raw.head(3).T
 """)
 md("## 2. Schema inspection\nThe API returns every field as text; staging applies types. Below are the staging types and an example of the API's original values.")
 code("""
-stg = read_df(conn, "SELECT * FROM staging.service_requests")
+stg = read_df(conn, "SELECT * FROM analytics.v_snapshot_raw")   # current source snapshot only (no superseded history)
 pd.DataFrame({'dtype': stg.dtypes.astype(str), 'example': stg.iloc[0]}).head(26)
 """)
 md("## 3. Descriptive statistics")
@@ -109,7 +109,10 @@ md("## 10. Data quality findings")
 code("""
 rs = read_df(conn, "SELECT rule_id, rule_name, severity, treatment, issues, affected_records FROM ops.v_dq_rule_summary ORDER BY issues DESC")
 iss = read_df(conn, "SELECT * FROM ops.v_dq_issues_latest")
-print(f"records inspected={len(stg):,}  affected={iss.record_hash.nunique():,} ({iss.record_hash.nunique()/len(stg):.3%})  issues={len(iss):,}")
+dqs = read_df(conn, "SELECT * FROM ops.v_dq_run_summary").iloc[0]
+print(f"record level : {dqs.records_affected:,} of {dqs.records_inspected:,} rows affected, pass rate {dqs.record_pass_rate:.3%}")
+print(f"request level: {dqs.requests_affected:,} of {dqs.requests_inspected:,} requests affected, pass rate {dqs.request_pass_rate:.3%}")
+print(f"individual issues: {len(iss):,}")
 pd.crosstab(iss.agency, iss.rule_id).loc[lambda t: t.sum(axis=1).sort_values(ascending=False).index]
 """)
 code("""
@@ -121,7 +124,7 @@ md("""
 **Timestamp precision (an observation, not a rule violation).** Most DOB closures are stamped exactly at midnight, so DOB closure times are recorded to the day only. DOHMH has a high share of zero-duration closures, where the request was closed at the second it was created. Both affect how comparable agency resolution times are. They are documented in `reports/root_cause_analysis.md` rather than "fixed".
 """)
 md("## 11. Raw vs cleaned comparison")
-code("read_df(conn, 'SELECT metric, raw_value, clean_value, abs_diff, pct_diff FROM analytics.v_raw_vs_clean')")
+code("read_df(conn, 'SELECT metric, unit, raw_value, clean_value, abs_diff, pct_diff FROM analytics.v_raw_vs_clean ORDER BY ord')")
 code("read_df(conn, 'SELECT * FROM analytics.v_raw_vs_clean_agency WHERE avg_abs_diff <> 0')")
 md("## 12. Business conclusions\nComputed below from the data; the narrative lives in `reports/executive_summary.md`.")
 code("""
@@ -130,7 +133,10 @@ bk = read_df(conn, "SELECT agency_code, backlog FROM analytics.v_backlog_monthly
 print(f"1. {int(k.total_requests):,} requests; {k.resolution_rate:.1%} closed; median {float(k.median_resolution_hours):.1f} h vs average {float(k.avg_resolution_hours):.1f} h.")
 print(f"2. {k.within_target_rate:.1%} of eligible requests resolved within the 7-day ANALYTICAL target (not an official SLA).")
 print('3. Largest month-end backlog at 2025-12-31:', ', '.join(f'{r.agency_code} ({r.backlog})' for r in bk.itertuples()))
-print(f"4. Data quality pass rate {1 - iss.record_hash.nunique()/len(stg):.2%}; cleaning moves headline KPIs by <0.5%, DOB median by ~9%.")
+rvc = read_df(conn, 'SELECT * FROM analytics.v_raw_vs_clean')
+dob = read_df(conn, "SELECT median_pct_diff FROM analytics.v_raw_vs_clean_agency WHERE agency_code = 'DOB'").iloc[0, 0]
+print(f"4. Request-level DQ pass rate {dqs.request_pass_rate:.2%}; largest headline change after cleaning "
+      f"{rvc.pct_diff.abs().max():.2f}%; DOB median change {dob:+.1f}%.")
 conn.close()
 """)
 

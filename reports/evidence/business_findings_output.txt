@@ -1,0 +1,171 @@
+=== F0. Headline raw vs cleaned ===
+                  metric                  |  unit   |  raw_value  | clean_value | abs_diff | pct_diff 
+------------------------------------------+---------+-------------+-------------+----------+----------
+ Total requests                           | count   | 134348.0000 | 134348.0000 |   0.0000 |    0.000
+ Closed requests                          | count   | 132019.0000 | 132019.0000 |   0.0000 |    0.000
+ Open requests                            | count   |   2329.0000 |   2329.0000 |   0.0000 |    0.000
+ Resolution rate (percent)                | percent |     98.2664 |     98.2664 |   0.0000 |    0.000
+ Average resolution (hours)               | hours   |    275.8118 |    275.6785 |  -0.1333 |   -0.048
+ Median resolution (hours)                | hours   |     15.2342 |     15.2970 |   0.0628 |    0.412
+ P90 resolution (hours)                   | hours   |    335.9721 |    335.3760 |  -0.5961 |   -0.177
+ Within 7-day analytical target (percent) | percent |     83.0221 |     83.0240 |   0.0019 |    0.002
+(8 rows)
+
+=== F1a. Why mean >> median: distribution of valid resolution hours ===
+   n    | mean_h | median_h | p75_h | p90_h | p99_h  |  max_h  
+--------+--------+----------+-------+-------+--------+---------
+ 131951 |  275.7 |     15.3 |  89.2 | 335.4 | 6716.0 | 15502.0
+(1 row)
+
+=== F1b. Share of total resolution hours contributed by the slowest 1% / 5% / 10% of requests ===
+ slowest_1pct_share | slowest_5pct_share | slowest_10pct_share 
+--------------------+--------------------+---------------------
+               31.1 |               74.8 |                86.2
+(1 row)
+
+=== F1c. Contribution of each agency to the overall mean (share of all resolution hours) ===
+ agency_code | resolved | pct_of_requests | pct_of_hours | median_h 
+-------------+----------+-----------------+--------------+----------
+ DPR         |    10883 |             8.2 |         43.0 |    133.8
+ DOB         |     4302 |             3.3 |         21.3 |    559.7
+ DOT         |    16539 |            12.5 |          9.6 |     62.7
+ HPD         |    11836 |             9.0 |          7.4 |     97.3
+ DSNY        |    23414 |            17.7 |          5.9 |     47.8
+ EDC         |      233 |             0.2 |          4.4 |   7893.6
+(6 rows)
+
+=== F2a. DOB raw vs cleaned durations ===
+ agency_code | raw_n | clean_n | raw_avg_hours | clean_avg_hours | avg_abs_diff | avg_pct_diff | raw_median_hours | clean_median_hours | median_pct_diff 
+-------------+-------+---------+---------------+-----------------+--------------+--------------+------------------+--------------------+-----------------
+ DOB         |  4456 |    4302 |       1757.13 |         1803.52 |        46.40 |        2.641 |           512.43 |             559.67 |           9.219
+(1 row)
+
+=== F2b. DOB records removed from the duration sample, by rule and status ===
+ rule_id |  status  | records | median_raw_h | min_raw_h 
+---------+----------+---------+--------------+-----------
+ DQ011   | Open     |     109 |          0.0 |       0.0
+ DQ011   | Assigned |      45 |       1135.0 |       0.0
+(2 rows)
+
+=== F2c. Where the removed DOB durations sit relative to the DOB median ===
+ dq011 |  n   | below_raw_median | under_one_day 
+-------+------+------------------+---------------
+ f     | 4302 |             2103 |           771
+ t     |  154 |              125 |           115
+(2 rows)
+
+=== F3a. DHS before/after: the 62 Closed-without-date requests ===
+ closed_date_missing | requests | first_created | last_created | median_h 
+---------------------+----------+---------------+--------------+----------
+ f                   |      307 | 2025-01-04    | 2025-12-28   |     2.11
+ t                   |       62 | 2025-01-09    | 2025-05-05   |         
+(2 rows)
+
+=== F3b. DHS requests per month and how many lack a closed date ===
+  month  | requests | no_closed_date 
+---------+----------+----------------
+ 2025-01 |       10 |              8
+ 2025-02 |        5 |              3
+ 2025-03 |       27 |             26
+ 2025-04 |       24 |             21
+ 2025-05 |       15 |              4
+ 2025-06 |       29 |              0
+ 2025-07 |       60 |              0
+ 2025-08 |       55 |              0
+ 2025-09 |       50 |              0
+ 2025-10 |       41 |              0
+ 2025-11 |       30 |              0
+ 2025-12 |       23 |              0
+(12 rows)
+
+=== F4a. The 459 requests over 365 days: by agency and complaint ===
+ agency |        complaint_type         | n  | avg_days 
+--------+-------------------------------+----+----------
+ DPR    | Dead/Dying Tree               | 90 |      423
+ DPR    | Root/Sewer/Sidewalk Condition | 79 |      417
+ DPR    | Damaged Tree                  | 76 |      421
+ DPR    | Overgrown Tree/Branches       | 64 |      434
+ DOB    | General Construction/Plumbing | 47 |      425
+ DOB    | Building/Use                  | 46 |      399
+ DOT    | Street Light Condition        | 16 |      484
+ EDC    | Noise - Helicopter            | 15 |      411
+(8 rows)
+
+=== F4b. Sensitivity: headline metrics with and without the >365-day requests ===
+        sample        |   n    | mean_h | median_h | p90_h 
+----------------------+--------+--------+----------+-------
+ all valid            | 131951 |  275.7 |    15.30 | 335.4
+ excluding > 365 days | 131493 |  241.3 |    15.02 | 325.6
+(2 rows)
+
+=== F4c. Do long-duration closures carry a plausible completion text? (top resolution texts) ===
+                                         resolution_text                                         | count 
+-------------------------------------------------------------------------------------------------+-------
+ NYC Parks performed the work necessary to correct the condition.                                |   227
+ NYC Parks inspected and determined this site does not rate high enough to be repaired by N      |    63
+ The Department of Buildings investigated this complaint and issued an Office of Administra      |    44
+ The Department of Buildings attempted to investigate this complaint twice but could not ga      |    24
+ Service Request status for this request is available on the Department of Transportationâ\u0080 |    16
+(5 rows)
+
+=== F5. DST-ambiguous timestamps (DQ015) ===
+ affected_column | created_day | agency | count 
+-----------------+-------------+--------+-------
+ created_date    | 2025-11-02  | NYPD   |    14
+ closed_date     | 2025-11-02  | NYPD   |    12
+ closed_date     | 2025-11-01  | NYPD   |     9
+ created_date    | 2025-11-02  | DOT    |     3
+ created_date    | 2025-11-02  | HPD    |     2
+ created_date    | 2025-11-02  | DHS    |     1
+(6 rows)
+
+=== F6. Aggregate vs agency data quality (request level, published) ===
+ agency_code | total_requests | records_with_dq_issues | pct_affected 
+-------------+----------------+------------------------+--------------
+ DHS         |            369 |                     64 |        17.34
+ TLC         |            133 |                     10 |         7.52
+ DOB         |           4456 |                    257 |         5.77
+ EDC         |            316 |                     15 |         4.75
+ DPR         |          11729 |                    313 |         2.67
+ DOT         |          16829 |                    350 |         2.08
+(6 rows)
+
+                run_id                | records_inspected | records_affected | record_pass_rate | requests_inspected | requests_affected | request_pass_rate | total_issues 
+--------------------------------------+-------------------+------------------+------------------+--------------------+-------------------+-------------------+--------------
+ 0413c6d5-d438-4361-898b-7cc49b5a0160 |            134348 |             1479 |         0.988991 |             134348 |              1479 |          0.988991 |         1508
+(1 row)
+
+=== F7. Right-censoring: share of requests still open by creation month ===
+  month  | created | pct_still_open | median_h 
+---------+---------+----------------+----------
+ 2025-01 |   10128 |           0.94 |     20.2
+ 2025-02 |    9158 |           1.31 |     15.8
+ 2025-03 |   10565 |           1.77 |     12.7
+ 2025-04 |   10710 |           1.79 |     12.4
+ 2025-05 |   12242 |           1.79 |     11.2
+ 2025-06 |   12117 |           1.76 |      6.8
+ 2025-07 |   13363 |           1.97 |     12.2
+ 2025-08 |   12158 |           2.22 |     15.9
+ 2025-09 |   11503 |           2.10 |     16.5
+ 2025-10 |   11515 |           1.92 |     13.8
+ 2025-11 |    9874 |           1.35 |     19.6
+ 2025-12 |   11015 |           1.59 |     22.3
+(12 rows)
+
+=== F8. Exact rolling 3-month average of created requests ===
+   month    | created_requests | closed_requests | created_rolling_3m_avg 
+------------+------------------+-----------------+------------------------
+ 2025-01-01 |            10128 |            8833 |                       
+ 2025-02-01 |             9158 |            8543 |                       
+ 2025-03-01 |            10565 |            9969 |                9950.33
+ 2025-04-01 |            10710 |            9892 |               10144.33
+ 2025-05-01 |            12242 |           11518 |               11172.33
+ 2025-06-01 |            12117 |           11741 |               11689.67
+ 2025-07-01 |            13363 |           12441 |               12574.00
+ 2025-08-01 |            12158 |           11280 |               12546.00
+ 2025-09-01 |            11503 |           11013 |               12341.33
+ 2025-10-01 |            11515 |           11586 |               11725.33
+ 2025-11-01 |             9874 |            9732 |               10964.00
+ 2025-12-01 |            11015 |           11091 |               10801.33
+(12 rows)
+

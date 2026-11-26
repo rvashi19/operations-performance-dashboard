@@ -93,10 +93,23 @@ def check_missing_geography(df, rule, ref, now):
     return [(mask, "incident_zip", pd.Series(pd.NA, index=df.index))]
 
 
+def check_dst_ambiguous(df, rule, ref, now):
+    """Floating local timestamps inside the repeated (fall-back) or skipped (spring-forward) hour."""
+    tz = ref.get("source_timezone", "America/New_York")
+    out = []
+    for c in rule["columns"]:
+        typed, raw = TS_RAW[c]
+        s = df[typed]
+        localized = s.dt.tz_localize(tz, ambiguous="NaT", nonexistent="NaT")
+        out.append((s.notna() & localized.isna(), c, df[raw]))
+    return out
+
+
 CHECKS = {f.__name__.removeprefix("check_"): f for f in [
     check_not_null, check_duplicate_key, check_exact_duplicate, check_closed_requires_date,
     check_closed_before_created, check_invalid_timestamp, check_future_timestamp,
-    check_open_with_closed_date, check_allowed_values, check_extreme_duration, check_missing_geography]}
+    check_open_with_closed_date, check_allowed_values, check_extreme_duration, check_missing_geography,
+    check_dst_ambiguous]}
 
 
 class Validator:
@@ -142,9 +155,23 @@ class Validator:
 
 
 def summarize(df: pd.DataFrame, issues: pd.DataFrame) -> dict:
-    """Record-level summary. A record with several issues is counted once in affected_records."""
-    total = len(df)
-    affected = issues["record_hash"].nunique() if not issues.empty else 0
-    return {"records_inspected": total, "records_with_issues": int(affected),
-            "records_passing": int(total - affected), "total_issues": int(len(issues)),
-            "pass_rate": round((total - affected) / total, 6) if total else None}
+    """Two explicitly different rates.
+
+    record level : denominator = every inspected row (exact-duplicate copies and rows without an ID included);
+                   a row is affected if its record (hash) failed any rule. One count per row, however many rules.
+    request level: denominator = distinct non-null unique_key; a request is affected if any row carrying that
+                   key failed any rule. Rows without an ID cannot be attributed to a request.
+    """
+    rows = len(df)
+    bad_hashes = set(issues["record_hash"]) if not issues.empty else set()
+    rows_affected = int(df["record_hash"].isin(bad_hashes).sum()) if rows else 0
+    keys = df["unique_key"].dropna()
+    requests = int(keys.nunique())
+    bad_keys = issues["unique_key"].dropna().nunique() if not issues.empty else 0
+    return {"records_inspected": rows, "records_affected": rows_affected,
+            "records_passing": rows - rows_affected,
+            "record_pass_rate": round((rows - rows_affected) / rows, 6) if rows else None,
+            "requests_inspected": requests, "requests_affected": int(bad_keys),
+            "request_pass_rate": round((requests - bad_keys) / requests, 6) if requests else None,
+            "records_without_id": int(df["unique_key"].isna().sum()),
+            "total_issues": int(len(issues))}
