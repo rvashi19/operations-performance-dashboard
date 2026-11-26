@@ -2,7 +2,7 @@
 
 Script: `sql/analytics/explain_analyze.sql`. Each "without index" measurement drops the index inside a transaction
 and rolls it back. Run twice; the second (warm-cache) run is reported. PostgreSQL 16 in Docker on a Windows 11
-laptop, 134,348 fact rows and 1,467 issue rows. Raw plans are in `logs/explain_2.txt` after running the script.
+laptop, 134,348 fact rows and 1,467 issue rows (measured before the QA review added DQ015; 1,508 issue rows now). Raw plans are in `logs/explain_2.txt` after running the script.
 
 | Query | With index | Without | Plan change | Speed-up |
 |---|---|---|---|---|

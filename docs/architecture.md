@@ -26,7 +26,7 @@ flowchart LR
 | Layer | Schema | Contents | Rule |
 |---|---|---|---|
 | Raw | `raw` | API records as JSONB, hash-keyed | Append-only; never modified. Old versions are kept as history. |
-| Staging | `staging` | One typed row per raw row, plus original timestamp text | Only safe normalisation (trim, upper-case codes, ISO parse, 5-digit ZIP) |
+| Staging | `staging` | One typed row per raw row, plus original timestamp text; `current_snapshot` lists the rows that make up the source *now* | Only safe normalisation (trim, upper-case codes, ISO parse, 5-digit ZIP) |
 | Ops | `ops` | Run history, rule catalogue, issues | One issue row per (run, record, rule, column) |
 | Analytics | `analytics` | Star schema, quarantine, audit, views | Latest valid version per `unique_key` |
 
@@ -43,7 +43,9 @@ flowchart LR
 
 * **Atomic raw file.** Pages stream to `*.part`, which is renamed only after the extracted row count is at least the
   API's own `count(*)`. A failed extract deletes the partial file and never replaces a good one.
-* **Single transaction** covers raw insert, staging, issues, dimensions, fact upsert, quarantine and audit. Any
+* **Current snapshot.** A full refresh replaces `staging.current_snapshot` with exactly what the source returned, so a record deleted at the source leaves the analytics layer, while every version ever extracted stays in `raw`. An incremental refresh replaces only the versions of changed keys, so an updated request is history, not a duplicate.
+* **Scope.** Each run stores a scope key (dataset, borough filter, half-open date window). Incremental runs only continue from a checkpoint with the same scope and a snapshot built for it.
+* **Single transaction** covers raw insert, snapshot, staging, issues, dimensions, fact upsert, quarantine, audit, **reporting views and the successful-run record**. Any
   exception rolls all of it back, and the run is recorded as `failed` with its error message.
 * **No empty publish.** A full refresh that returns zero rows, or cleaning that leaves zero rows, is refused, so the
   dashboard can't show misleading zero metrics.

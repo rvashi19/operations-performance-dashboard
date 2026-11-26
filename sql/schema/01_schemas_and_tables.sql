@@ -141,7 +141,7 @@ CREATE TABLE IF NOT EXISTS analytics.fact_service_request (
     complaint_key       INTEGER NOT NULL REFERENCES analytics.dim_complaint(complaint_key),
     geography_key       INTEGER NOT NULL REFERENCES analytics.dim_geography(geography_key),
     status              TEXT NOT NULL,
-    status_group        TEXT NOT NULL CHECK (status_group IN ('Closed','Open')),
+    status_group        TEXT NOT NULL,   -- Closed | Open | Unknown (constraint below)
     created_at          TIMESTAMP NOT NULL,
     closed_at           TIMESTAMP,
     effective_closed_at TIMESTAMP,            -- closed_at only when it is valid for metrics; drives historical backlog
@@ -184,3 +184,24 @@ CREATE TABLE IF NOT EXISTS analytics.cleaning_audit (
     decided_at   TIMESTAMPTZ NOT NULL
 );
 CREATE INDEX IF NOT EXISTS ix_audit_run ON analytics.cleaning_audit(run_id, action);
+
+-- ---------- QA additions (idempotent; safe on databases created by earlier versions) ----------
+ALTER TABLE ops.pipeline_runs ADD COLUMN IF NOT EXISTS scope_key TEXT;
+ALTER TABLE ops.pipeline_runs ADD COLUMN IF NOT EXISTS records_inspected INTEGER;
+ALTER TABLE ops.pipeline_runs ADD COLUMN IF NOT EXISTS records_affected INTEGER;
+ALTER TABLE ops.pipeline_runs ADD COLUMN IF NOT EXISTS requests_inspected INTEGER;
+ALTER TABLE ops.pipeline_runs ADD COLUMN IF NOT EXISTS requests_affected INTEGER;
+
+ALTER TABLE analytics.fact_service_request DROP CONSTRAINT IF EXISTS fact_service_request_status_group_check;
+ALTER TABLE analytics.fact_service_request ADD CONSTRAINT fact_service_request_status_group_check
+    CHECK (status_group IN ('Closed', 'Open', 'Unknown'));
+
+-- The records that make up the CURRENT source snapshot for the configured scope.
+-- Full refresh replaces it with exactly what the source returned; incremental replaces the versions of
+-- changed keys. raw/staging keep every version ever extracted (history); this table defines "now".
+CREATE TABLE IF NOT EXISTS staging.current_snapshot (
+    record_hash  CHAR(32) PRIMARY KEY REFERENCES staging.service_requests(record_hash),
+    unique_key   TEXT,
+    run_id       UUID NOT NULL REFERENCES ops.pipeline_runs(run_id)
+);
+CREATE INDEX IF NOT EXISTS ix_snapshot_key ON staging.current_snapshot(unique_key);

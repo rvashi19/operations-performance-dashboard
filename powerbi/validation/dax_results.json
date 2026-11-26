@@ -1,0 +1,172 @@
+﻿{
+    "headline":  [
+                     {
+                         "[total]":  134348,
+                         "[closed]":  132019,
+                         "[open]":  2329,
+                         "[unknown]":  null,
+                         "[resolution_rate]":  0.98266442373537377,
+                         "[avg_h]":  275.67848754462045,
+                         "[median_h]":  15.297,
+                         "[p90_h]":  335.376,
+                         "[within_target]":  0.83024001333828468,
+                         "[current_backlog]":  2329,
+                         "[overdue]":  2329,
+                         "[record_pass]":  0.988991,
+                         "[request_pass]":  0.988991,
+                         "[dq_issues]":  1508,
+                         "[manual_review]":  191
+                     }
+                 ],
+    "backlog_dec_2025":  [
+                             {
+                                 "[backlog]":  6641
+                             }
+                         ],
+    "backlog_jun_2025":  [
+                             {
+                                 "[backlog]":  4361
+                             }
+                         ],
+    "rolling_by_month":  [
+                             {
+                                 "Calendar[year_month]":  "2025-01",
+                                 "[created]":  10128,
+                                 "[closed]":  8833,
+                                 "[rolling3]":  null
+                             },
+                             {
+                                 "Calendar[year_month]":  "2025-02",
+                                 "[created]":  9158,
+                                 "[closed]":  8543,
+                                 "[rolling3]":  null
+                             },
+                             {
+                                 "Calendar[year_month]":  "2025-03",
+                                 "[created]":  10565,
+                                 "[closed]":  9969,
+                                 "[rolling3]":  9950.3333333333339
+                             },
+                             {
+                                 "Calendar[year_month]":  "2025-04",
+                                 "[created]":  10710,
+                                 "[closed]":  9892,
+                                 "[rolling3]":  10144.333333333334
+                             },
+                             {
+                                 "Calendar[year_month]":  "2025-05",
+                                 "[created]":  12242,
+                                 "[closed]":  11518,
+                                 "[rolling3]":  11172.333333333334
+                             },
+                             {
+                                 "Calendar[year_month]":  "2025-06",
+                                 "[created]":  12117,
+                                 "[closed]":  11741,
+                                 "[rolling3]":  11689.666666666666
+                             },
+                             {
+                                 "Calendar[year_month]":  "2025-07",
+                                 "[created]":  13363,
+                                 "[closed]":  12441,
+                                 "[rolling3]":  12574
+                             },
+                             {
+                                 "Calendar[year_month]":  "2025-08",
+                                 "[created]":  12158,
+                                 "[closed]":  11280,
+                                 "[rolling3]":  12546
+                             },
+                             {
+                                 "Calendar[year_month]":  "2025-09",
+                                 "[created]":  11503,
+                                 "[closed]":  11013,
+                                 "[rolling3]":  12341.333333333334
+                             },
+                             {
+                                 "Calendar[year_month]":  "2025-10",
+                                 "[created]":  11515,
+                                 "[closed]":  11586,
+                                 "[rolling3]":  11725.333333333334
+                             },
+                             {
+                                 "Calendar[year_month]":  "2025-11",
+                                 "[created]":  9874,
+                                 "[closed]":  9732,
+                                 "[rolling3]":  10964
+                             },
+                             {
+                                 "Calendar[year_month]":  "2025-12",
+                                 "[created]":  11015,
+                                 "[closed]":  11091,
+                                 "[rolling3]":  10801.333333333334
+                             }
+                         ],
+    "slicer_agency_dob":  [
+                              {
+                                  "[requests]":  4456,
+                                  "[current_backlog]":  154,
+                                  "[dq_issues]":  258,
+                                  "[median_h]":  559.669
+                              }
+                          ],
+    "slicer_complaint":  [
+                             {
+                                 "[requests]":  1701,
+                                 "[current_backlog]":  455,
+                                 "[dq_issues]":  79
+                             }
+                         ],
+    "slicer_zip":  [
+                       {
+                           "[requests]":  17009,
+                           "[current_backlog]":  462
+                       }
+                   ],
+    "slicer_status":  [
+                          {
+                              "[requests]":  1773,
+                              "[current_backlog]":  1773
+                          }
+                      ],
+    "dq_by_rule":  [
+                       {
+                           "DQIssues[rule_id]":  "DQ013",
+                           "[issues]":  459
+                       },
+                       {
+                           "DQIssues[rule_id]":  "DQ005",
+                           "[issues]":  62
+                       },
+                       {
+                           "DQIssues[rule_id]":  "DQ006",
+                           "[issues]":  24
+                       },
+                       {
+                           "DQIssues[rule_id]":  "DQ011",
+                           "[issues]":  191
+                       },
+                       {
+                           "DQIssues[rule_id]":  "DQ014",
+                           "[issues]":  731
+                       },
+                       {
+                           "DQIssues[rule_id]":  "DQ015",
+                           "[issues]":  41
+                       }
+                   ],
+    "agency_dq_pct":  [
+                          {
+                              "Agency[agency_code]":  "DOB",
+                              "[pct]":  0.057675044883303411
+                          },
+                          {
+                              "Agency[agency_code]":  "DHS",
+                              "[pct]":  0.17344173441734417
+                          },
+                          {
+                              "Agency[agency_code]":  "TLC",
+                              "[pct]":  0.075187969924812026
+                          }
+                      ]
+}

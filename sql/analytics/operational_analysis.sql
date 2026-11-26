@@ -74,15 +74,28 @@ GROUP BY g.incident_zip
 HAVING count(f.resolution_hours) >= 200
 ORDER BY median_hours DESC;
 
--- Q7. Are resolution times improving over time? 3-month rolling median proxy via rolling average of monthly medians.
--- Purpose: trend in service performance. (window frame ROWS BETWEEN)
-WITH m AS (SELECT date_trunc('month', created_at) AS month,
-                  percentile_cont(0.5) WITHIN GROUP (ORDER BY resolution_hours) AS median_h,
-                  avg(resolution_hours) AS avg_h
-           FROM analytics.fact_service_request GROUP BY 1)
-SELECT to_char(month, 'YYYY-MM') AS month, round(median_h::numeric, 2) AS median_hours, round(avg_h, 2) AS avg_hours,
-       round(avg(median_h) OVER (ORDER BY month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)::numeric, 2) AS rolling_3m_median
-FROM m ORDER BY month;
+-- Q7. Are resolution times improving over time? Exact 3-calendar-month rolling median.
+-- Purpose: trend in service performance. For each month M the median is computed over ALL valid durations of
+-- requests created in M, M-1 and M-2 (pooled), not an average of monthly medians, and months are generated from
+-- a calendar so a month with no requests can never silently shift the window. (generate_series, LEFT JOIN, date ranges)
+-- Caveat: later months are right-censored (less time to close), which biases their medians down.
+WITH months AS (
+    SELECT generate_series(date_trunc('month', min(created_at)), date_trunc('month', max(created_at)),
+                           interval '1 month')::date AS month
+    FROM analytics.fact_service_request),
+monthly AS (
+    SELECT date_trunc('month', created_at)::date AS month,
+           percentile_cont(0.5) WITHIN GROUP (ORDER BY resolution_hours) AS median_h, avg(resolution_hours) AS avg_h
+    FROM analytics.fact_service_request GROUP BY 1)
+SELECT to_char(m.month, 'YYYY-MM') AS month,
+       round(mo.median_h::numeric, 2) AS median_hours, round(mo.avg_h, 2) AS avg_hours,
+       CASE WHEN m.month >= (SELECT min(month) FROM months) + interval '2 months' THEN
+           (SELECT round((percentile_cont(0.5) WITHIN GROUP (ORDER BY f.resolution_hours))::numeric, 2)
+            FROM analytics.fact_service_request f
+            WHERE f.created_at >= m.month - interval '2 months' AND f.created_at < m.month + interval '1 month')
+       END AS rolling_3m_pooled_median
+FROM months m LEFT JOIN monthly mo USING (month)
+ORDER BY m.month;
 
 -- Q8. Which agencies have the highest data quality issue rates?
 -- Purpose: where reporting is least reliable. (LEFT JOIN keeps agencies with 0 issues; conditional aggregation)

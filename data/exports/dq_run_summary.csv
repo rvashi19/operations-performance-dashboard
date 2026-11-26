@@ -1,0 +1,2 @@
+run_id,records_inspected,records_affected,record_pass_rate,requests_inspected,requests_affected,request_pass_rate,total_issues
+0413c6d5-d438-4361-898b-7cc49b5a0160,134348,1479,0.988991,134348,1479,0.988991,1508

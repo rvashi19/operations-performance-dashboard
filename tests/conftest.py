@@ -80,6 +80,9 @@ def test_engine():
             if not c.execute(text("SELECT 1 FROM pg_database WHERE datname=:d"), {"d": test_db}).scalar():
                 c.execute(text(f'CREATE DATABASE "{test_db}"'))
     except Exception as exc:
+        # In CI (REQUIRE_DB=1) a missing database must fail the build, never silently skip it.
+        if os.getenv("REQUIRE_DB") == "1":
+            pytest.fail(f"REQUIRE_DB=1 but PostgreSQL is unreachable: {exc}")
         pytest.skip(f"PostgreSQL not available for integration tests: {exc}")
     eng = create_engine(url.set(database=test_db))
     yield eng

@@ -1,5 +1,8 @@
 # Interview Preparation
 
+> Superseded by [`interview_study_guide.md`](interview_study_guide.md), which reflects the QA review. Figures here were
+> updated for the QA review (15 rules, 1,479 affected requests, 98.899% pass rate).
+
 Labels used below: **[Implementation]** = a design decision in the code · **[Finding]** = produced by the pipeline
 on the real data · **[Assumption]** = a judgement call or something that can't be verified from public data.
 This is a portfolio project built on public open data. It was not deployed for, or used by, any municipal department.
@@ -9,10 +12,10 @@ This is a portfolio project built on public open data. It was not deployed for, 
 "I built an end-to-end operations analytics pipeline on real NYC 311 data: about 134,000 Staten Island service
 requests from 2025. A Python job pulls the data from the city's open data API with pagination and retries, stores
 the untouched records in PostgreSQL, and runs them through a configurable validation framework of 14 data quality
-rules. A documented treatment policy then publishes a star schema that Power BI reads. 98.9% of records passed every
+rules. A documented treatment policy then publishes a star schema that Power BI reads. 98.9% of requests passed every
 rule. The failures weren't random. They sat in specific workflows, for example 62 homeless-outreach requests closed
 without a closure time, all between January and May. I also measured how much the cleaning changed the reported
-KPIs. City-wide it was under half a percent, but the Department of Buildings' median resolution time moved by 9%.
+KPIs. For Staten Island headline KPIs it was under half a percent, but the Department of Buildings' median resolution time moved by 9%.
 The project includes 44 automated tests, CI, SQL analysis and a five-page Power BI dashboard."
 
 ## Five-minute technical walkthrough
@@ -56,7 +59,7 @@ the 100k–300k range. The raw JSON lines file is kept unchanged. [Implementatio
 
 **How does the validation framework work?** YAML declares rules, a registry maps check names to functions, and
 issues are stored per run. The affected-record count uses distinct record hashes, so a record failing three rules
-counts once. 1,467 issues fell on 1,448 records. [Finding]
+counts once. 1,508 issues fell on 1,479 requests. [Finding]
 
 **How do duplicates affect business metrics?** A duplicated request inflates volume, and if one copy is stale it
 can count a closed request as open (inflating backlog) or add a second duration. This extract had 0 duplicate IDs
@@ -174,9 +177,9 @@ timestamps.
 **2. Quantifying cleaning impact honestly.**
 *S:* The brief expected data cleaning to change reported metrics. *T:* Measure the change rather than assume it.
 *A:* I built a raw-vs-clean view with identical formulas, per agency, plus a per-rule attribution table. *R:*
-City-wide KPIs moved by less than 0.5%, but DOB's median rose from 512 to 560 h because 154 open-with-close-date
+Staten Island headline KPIs moved by less than 0.5%, but DOB's median rose from 512 to 560 h because 154 open-with-close-date
 records were inflating its closures. The recommendation became targeted: a DOB status review rather than a
-city-wide cleanup.
+borough-wide cleanup.
 
 **3. Making refreshes safe.**
 *S:* During the first real extraction, the API returned HTTP 503 twice. *T:* Make sure a failed refresh could never
@@ -190,9 +193,9 @@ recorded as `failed`.
 * Built a Python/PostgreSQL ELT pipeline that ingests 134,348 NYC 311 service requests through the Socrata API
   (paginated, retrying, idempotent) into raw, staging and star-schema analytics layers, backed by 44 automated
   tests in GitHub Actions.
-* Designed a YAML-configurable data quality framework (14 rules, audit trail, quarantine and manual-review routing)
-  that measured a 98.9% pass rate and traced 1,448 affected records to specific causes, including a
+* Designed a YAML-configurable data quality framework (15 rules, audit trail, quarantine and manual-review routing)
+  that measured a 98.9% pass rate and traced 1,479 affected requests to specific causes, including a
   daylight-saving timestamp defect and a 4-month closure-date gap in one workflow.
-* Quantified data-cleaning impact on operational KPIs (city-wide change under 0.5%; Buildings median resolution
+* Quantified data-cleaning impact on operational KPIs (Staten Island headline change under 0.5%; Buildings median resolution
   +9.2%), wrote 17 analytical SQL queries, and built a 5-page Power BI dashboard (generated as a PBIP from code) on backlog, resolution time and
   data quality; indexing cut drill-down query time from 13.2 ms to 0.5 ms.

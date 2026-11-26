@@ -7,7 +7,7 @@ data, not an official City report._
 ## What we looked at
 
 134,348 service requests created in Staten Island during 2025, across 15 city agencies. The data was checked
-against 14 quality rules before any metric was calculated.
+against 15 quality rules before any metric was calculated.
 
 ## Headline results
 
@@ -20,7 +20,7 @@ against 14 quality rules before any metric was calculated.
 | 90% of requests resolved within | 335 hours (14 days) |
 | Resolved within 7 days (internal analytical target, not an official SLA) | **83.0%** |
 | Still open at extraction | 2,329 |
-| Records passing all data quality checks | **98.92%** |
+| Requests passing all data quality checks | **98.90%** (1,479 of 134,348 affected) |
 
 ## Key findings
 
@@ -37,20 +37,20 @@ against 14 quality rules before any metric was calculated.
    requests).
 4. **The biggest overdue categories** are Parks root/sewer/sidewalk conditions (455 still open), sanitation dirty
    conditions (230) and street conditions (215).
-5. **Data quality is good overall, with specific, explainable problems.** 1.08% of records (1,448) had at least one
+5. **Data quality is good overall, with specific, explainable problems.** 1.10% of requests (1,479) had at least one
    issue. None were duplicates or missing an ID. The problems sit in particular workflows:
    * 62 homeless-assistance requests marked closed with no closure time, all between January and May 2025;
    * 191 requests, mostly Buildings, shown as open or assigned while also carrying a closure date;
-   * 24 requests that appear to close before they were opened, caused by the November daylight-saving clock change
-     and a consistent one-day offset on street-light tickets;
+   * 24 requests that appear to close before they were opened: 3 fall in the November daylight-saving fall-back
+     hour, and 18 street-light tickets show a consistent one-day offset whose cause is unknown;
    * 731 highway incidents with no address or coordinates.
-6. **Cleaning changes the city-wide numbers very little but matters for individual agencies.** Every headline metric
+6. **Cleaning changes the Staten Island headline numbers very little but matters for individual agencies.** Every headline metric
    moved by less than 0.5%. Buildings' median resolution time rose by 9% (512 → 560 hours) once open cases with old
    closure dates were excluded.
 
 ## Recommendations
 
-1. Report resolution performance as **median and 90th percentile by agency**, not a single city-wide average.
+1. Report resolution performance as **median and 90th percentile by agency**, not a single borough-wide average.
 2. Ask Parks and Buildings for backlog reduction plans; track month-end backlog by agency each month.
 3. Ask the Department of Buildings to review the 191 open-but-dated requests. Cleaning up their status would fix
    their reported performance.

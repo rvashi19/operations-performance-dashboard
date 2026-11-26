@@ -54,14 +54,19 @@ class SocrataClient:
 
     @staticmethod
     def build_where(start: str, end: str, filters: dict, updated_since: str | None = None) -> str:
-        clauses = [f"created_date between '{start}' and '{end}'"]
+        # half-open window: avoids the millisecond gap/overlap of an inclusive "between ... 23:59:59.999"
+        clauses = [f"created_date >= '{start}'", f"created_date < '{end}'"]
         clauses += [f"{k}='{v}'" for k, v in filters.items()]
         if updated_since:
             clauses.append(f":updated_at > '{updated_since}'")
         return " AND ".join(clauses)
 
     def count(self, where: str) -> int:
-        return int(self._get({"$select": "count(*) AS n", "$where": where})[0]["n"])
+        data = self._get({"$select": "count(*) AS n", "$where": where})
+        try:
+            return int(data[0]["n"])
+        except (IndexError, KeyError, TypeError, ValueError) as exc:
+            raise ExtractionError(f"malformed count response: {str(data)[:200]}") from exc
 
     def iter_pages(self, where: str, columns: list[str]):
         """Offset pagination ordered by the stable unique key (required for consistent paging)."""
@@ -71,6 +76,8 @@ class SocrataClient:
             page = self._get({"$select": select, "$where": where, "$order": "unique_key",
                               "$limit": self.page_size, "$offset": offset})
             log.info("fetched page offset=%s rows=%s", offset, len(page))
+            if any(not isinstance(r, dict) for r in page):
+                raise ExtractionError(f"page at offset {offset} contains non-object rows")
             if not page:
                 return
             yield page

@@ -29,10 +29,17 @@ def init_db(engine: Engine) -> None:
     log.info("database schema initialised")
 
 
-def build_views(engine: Engine) -> None:
-    with engine.begin() as conn:
+def build_views(target) -> None:
+    """Rebuild reporting views. Pass a Connection to join the caller's transaction (views are
+    transactional in PostgreSQL, so a failure rolls back together with the data it describes)."""
+    def _run(conn):
         for f in sorted((ROOT / "sql" / "transformations").glob("*views*.sql")):
             run_sql_file(conn, f)
+    if isinstance(target, Engine):
+        with target.begin() as conn:
+            _run(conn)
+    else:
+        _run(target)
     log.info("reporting views built")
 
 

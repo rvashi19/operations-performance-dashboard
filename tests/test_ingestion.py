@@ -70,7 +70,8 @@ def test_non_list_payload_is_rejected():
 
 
 def test_where_clause_contains_window_filters_and_checkpoint():
-    w = SocrataClient.build_where("2025-01-01T00:00:00", "2025-12-31T23:59:59", {"borough": "STATEN ISLAND"},
+    w = SocrataClient.build_where("2025-01-01T00:00:00", "2026-01-01T00:00:00", {"borough": "STATEN ISLAND"},
                                   "2025-06-01T00:00:00")
-    assert "created_date between '2025-01-01T00:00:00' and '2025-12-31T23:59:59'" in w
+    # half-open window: nothing at 23:59:59.9995 is lost and nothing at the next midnight is double counted
+    assert "created_date >= '2025-01-01T00:00:00' AND created_date < '2026-01-01T00:00:00'" in w
     assert "borough='STATEN ISLAND'" in w and ":updated_at > '2025-06-01T00:00:00'" in w

@@ -6,8 +6,9 @@ import pandas as pd
 from sqlalchemy.engine import Engine
 
 from src import config
-from src.analytics.kpis import clean_kpis, naive_kpis
+from src.analytics.kpis import clean_kpis, monthly_rolling_average, naive_kpis
 from src.database.db import read_df
+from src.validation.framework import summarize
 
 log = logging.getLogger(__name__)
 EXPORTS = {
@@ -18,13 +19,15 @@ EXPORTS = {
     "dim_geography": "SELECT * FROM analytics.dim_geography",
     "kpi_summary": "SELECT * FROM analytics.v_kpi_summary",
     "monthly_volume": "SELECT * FROM analytics.v_monthly_volume ORDER BY month",
+    "monthly_volume_rolling": "SELECT * FROM analytics.v_monthly_volume_rolling ORDER BY month",
+    "dq_run_summary": "SELECT * FROM ops.v_dq_run_summary",
     "backlog_monthly": "SELECT * FROM analytics.v_backlog_monthly ORDER BY month_end, agency_code",
     "open_requests": "SELECT * FROM analytics.v_open_requests",
     "agency_performance": "SELECT * FROM analytics.v_agency_performance ORDER BY total_requests DESC",
     "complaint_performance": "SELECT * FROM analytics.v_complaint_performance ORDER BY total_requests DESC",
     "dq_issues": "SELECT * FROM ops.v_dq_issues_latest",
     "dq_rule_summary": "SELECT * FROM ops.v_dq_rule_summary ORDER BY rule_id",
-    "raw_vs_clean": "SELECT * FROM analytics.v_raw_vs_clean",
+    "raw_vs_clean": "SELECT * FROM analytics.v_raw_vs_clean ORDER BY ord",
     "raw_vs_clean_agency": "SELECT * FROM analytics.v_raw_vs_clean_agency ORDER BY agency_code",
     "cleaning_audit_summary": """SELECT action, COALESCE(rule_ids, '') AS rule_ids, count(*) AS records
         FROM analytics.cleaning_audit WHERE run_id = (SELECT run_id FROM ops.v_latest_load_run)
@@ -58,39 +61,64 @@ def export_csvs(conn) -> dict:
     return frames
 
 
+
+def _close(a, b, tol):
+    return a is not None and b is not None and not pd.isna(a) and not pd.isna(b) and abs(float(a) - float(b)) <= tol
+
+
 def generate_all(engine: Engine) -> dict:
     s = config.settings()
+    rules_cfg = config.validation_rules()
     target = s["analytics"]["analytical_target_days"]
     with engine.connect() as conn:
         f = export_csvs(conn)
         run = read_df(conn, "SELECT r.*, lr.reporting_date FROM ops.pipeline_runs r "
                             "JOIN ops.v_latest_load_run lr USING (run_id)").iloc[0]
-        stg = read_df(conn, f"SELECT {', '.join(STAGING_FIELDS)}, record_hash FROM staging.service_requests "
-                            "WHERE created_at BETWEEN :s AND :e OR created_at IS NULL",
-                      s=run["window_start"], e=run["window_end"])
+        # "raw" = the current source snapshot (superseded historical versions are not part of it)
+        stg = read_df(conn, f"SELECT {', '.join(STAGING_FIELDS)}, record_hash FROM analytics.v_snapshot_raw")
         fact = read_df(conn, "SELECT unique_key, status_group, created_at, closed_at, effective_closed_at, "
                              "resolution_hours, include_in_resolution_metrics, within_analytical_target "
                              "FROM analytics.fact_service_request")
         issues = f["dq_issues"]
+    for c in ("created_at", "closed_at"):
+        stg[c] = pd.to_datetime(stg[c])
 
-    # ---------- reconciliation: python KPI implementation vs SQL view ----------
+    # ---------- reconciliation: independent Python implementations vs SQL views ----------
     py, sql = clean_kpis(fact), f["kpi_summary"].iloc[0]
-    checks = {"total_requests": (py["total_requests"], sql["total_requests"]),
-              "closed_requests": (py["closed_requests"], sql["closed_requests"]),
-              "median_resolution_hours": (round(py["median_resolution_hours"], 2), float(sql["median_resolution_hours"])),
-              "avg_resolution_hours": (round(py["avg_resolution_hours"], 2), float(sql["avg_resolution_hours"]))}
-    mismatches = {k: v for k, v in checks.items() if abs(float(v[0]) - float(v[1])) > 0.011}
+    naive = naive_kpis(stg, target)
+    raw_sql = f["raw_vs_clean"].set_index("ord")["raw_value"]
+    roll_sql = f["monthly_volume_rolling"]
+    roll_py = monthly_rolling_average(fact["created_at"], 3, start=pd.Timestamp(run["window_start"]).to_period("M"),
+                                      end=(pd.Timestamp(run["window_end"]) - pd.Timedelta("1us")).to_period("M"))
+    # request-level counts are reconciled; record-level counts can legitimately differ here because the snapshot
+    # view stores one row per distinct record while the pipeline also counted exact-duplicate copies.
+    dq_py = summarize(stg.assign(unique_key=stg["unique_key"].astype("string")), issues)
+    dq_sql = f["dq_run_summary"].iloc[0]
+    checks = {
+        "total_requests": (py["total_requests"], sql["total_requests"], 0),
+        "closed_requests": (py["closed_requests"], sql["closed_requests"], 0),
+        "open_requests": (py["open_requests"], sql["open_requests"], 0),
+        "unknown_status_requests": (py["unknown_status_requests"], sql["unknown_status_requests"], 0),
+        "avg_resolution_hours": (py["avg_resolution_hours"], sql["avg_resolution_hours"], 0.006),
+        "median_resolution_hours": (py["median_resolution_hours"], sql["median_resolution_hours"], 0.006),
+        "p90_resolution_hours": (py["p90_resolution_hours"], sql["p90_resolution_hours"], 0.006),
+        "raw_avg_resolution_hours": (naive["avg_resolution_hours"], raw_sql[5], 0.0001),
+        "raw_median_resolution_hours": (naive["median_resolution_hours"], raw_sql[6], 0.0001),
+        "requests_inspected": (dq_py["requests_inspected"], dq_sql["requests_inspected"], 0),
+        "requests_affected": (dq_py["requests_affected"], dq_sql["requests_affected"], 0),
+        "rolling_3m_last_month": (roll_py.iloc[-1, 2], roll_sql["created_rolling_3m_avg"].iloc[-1], 0.006),
+    }
+    mismatches = {k: v for k, v in checks.items() if not _close(v[0], v[1], v[2])}
     if mismatches:
         raise AssertionError(f"KPI reconciliation failed (python vs SQL): {mismatches}")
 
-    total = len(stg)
-    affected = issues["record_hash"].nunique()
+    total, requests = int(dq_sql["records_inspected"]), int(dq_sql["requests_inspected"])
+    rec_aff, req_aff = int(dq_sql["records_affected"]), int(dq_sql["requests_affected"])
     missing = pd.DataFrame({"column": STAGING_FIELDS,
                             "missing": [int(stg[c].isna().sum()) for c in STAGING_FIELDS]})
-    missing["missing_pct"] = (100 * missing["missing"] / total).round(3)
+    missing["missing_pct"] = (100 * missing["missing"] / len(stg)).round(3)
     missing.to_csv(config.ROOT / "data" / "exports" / "dq_missing_values.csv", index=False)
-    dup_ids = int(stg["unique_key"].duplicated().sum())
-    dup_exact = int(stg["record_hash"].duplicated().sum())
+    dup_ids = int(stg["unique_key"].dropna().duplicated().sum())
     by_rule = f["dq_rule_summary"][["rule_id", "rule_name", "category", "severity", "treatment", "issues",
                                     "affected_records"]]
     by_cat = issues.groupby("issue_category").agg(issues=("issue_id", "count"),
@@ -98,100 +126,106 @@ def generate_all(engine: Engine) -> dict:
     by_sev = issues.groupby("severity").agg(issues=("issue_id", "count")).reset_index()
     by_agency = f["agency_performance"][["agency_code", "total_requests", "records_with_dq_issues", "dq_issues"]].copy()
     by_agency["affected_pct"] = (100 * by_agency["records_with_dq_issues"] / by_agency["total_requests"]).round(3)
+    by_agency = by_agency.rename(columns={"total_requests": "published_requests",
+                                          "records_with_dq_issues": "requests_with_issues"})
     by_agency = by_agency.sort_values("affected_pct", ascending=False)
     by_month = issues.pivot_table(index="created_month", columns="rule_id", values="issue_id",
                                   aggfunc="count", fill_value=0).reset_index()
     manual = issues[issues["resolution_status"] == "pending_manual_review"]["record_hash"].nunique()
+    end_incl = (pd.Timestamp(run["window_end"]) - pd.Timedelta("1us")).date()
     metrics = {"run_id": str(run["run_id"]), "reporting_date": str(run["reporting_date"]),
-               "window": [str(run["window_start"]), str(run["window_end"])],
-               "records_inspected": total, "records_with_issues": int(affected), "total_issues": int(len(issues)),
-               "affected_pct": affected / total, "pass_rate": (total - affected) / total,
-               "manual_review_records": int(manual), "duplicate_ids": dup_ids, "exact_duplicates": dup_exact}
+               "window_half_open": [str(run["window_start"]), str(run["window_end"])],
+               "records_inspected": total, "records_affected": rec_aff, "record_pass_rate": (total - rec_aff) / total if total else None,
+               "requests_inspected": requests, "requests_affected": req_aff,
+               "request_pass_rate": (requests - req_aff) / requests if requests else None,
+               "total_issues": int(len(issues)), "manual_review_records": int(manual),
+               "duplicate_request_ids_in_snapshot": dup_ids, "records_without_id": int(stg["unique_key"].isna().sum())}
 
     report = [
         "# Data Quality Report", "",
-        f"_Generated from pipeline run `{run['run_id']}` (extracted {run['started_at']:%Y-%m-%d %H:%M %Z}). "
-        f"Scope: NYC 311 requests created {run['window_start']:%Y-%m-%d} to {run['window_end']:%Y-%m-%d}, "
+        f"_Generated from pipeline run `{run['run_id']}` (extracted {pd.Timestamp(run['started_at']).tz_convert('America/New_York'):%Y-%m-%d %H:%M} New York time). "
+        f"Scope: NYC 311 requests created {run['window_start']:%Y-%m-%d} to {end_incl} inclusive, "
         f"borough = {s['source']['filters']['borough']}._", "",
         "## Summary", "",
+        "Two rates are reported because they answer different questions. **Record level** counts every inspected "
+        "row of the current source snapshot (an exact-duplicate copy or a row without an ID is still a row). "
+        "**Request level** counts distinct `unique_key` values. In this extract each request has exactly one row, "
+        "so the two coincide; they diverge as soon as duplicates or missing IDs appear.", "",
         "| Measure | Value |", "|---|---|",
-        f"| Total records inspected | {total:,} |",
-        f"| Records passing all rules (valid) | {total - affected:,} |",
-        f"| Unique affected records | {affected:,} ({affected / total:.3%}) |",
-        f"| Total individual issues | {len(issues):,} |",
-        f"| Data quality pass rate | {(total - affected) / total:.3%} |",
-        f"| Duplicate request IDs | {dup_ids:,} ({dup_ids / total:.3%}) |",
-        f"| Exact duplicate records | {dup_exact:,} ({dup_exact / total:.3%}) |",
+        f"| Records (rows) inspected | {total:,} |",
+        f"| Records affected by at least one rule | {rec_aff:,} ({rec_aff / total:.3%}) |",
+        f"| **Record-level pass rate** | **{(total - rec_aff) / total:.3%}** |",
+        f"| Requests (distinct IDs) inspected | {requests:,} |",
+        f"| Requests affected | {req_aff:,} ({req_aff / requests:.3%}) |",
+        f"| **Request-level pass rate** | **{(requests - req_aff) / requests:.3%}** |",
+        f"| Total individual issues (one per record per rule) | {len(issues):,} |",
+        f"| Duplicate request IDs inside the snapshot | {dup_ids:,} |",
+        f"| Rows without a request ID | {metrics['records_without_id']:,} |",
         f"| Records requiring manual investigation | {manual:,} |", "",
-        "A record with several issues is counted once in *unique affected records* and the pass rate; "
-        "it is counted once per rule in *total individual issues*.", "",
         "## Issues by rule", "", md_table(by_rule), "",
         "## Issues by category", "", md_table(by_cat), "",
         "## Issues by severity", "", md_table(by_sev), "",
         "## Missing values (all inspected records)", "",
         "Missing values are not automatically errors: `closed_at` is legitimately empty for open requests, and "
         "`due_at` is an optional field populated by few agencies.", "", md_table(missing), "",
-        "## Issue distribution by agency", "", md_table(by_agency), "",
+        "## Issue distribution by agency (request level, published requests)", "", md_table(by_agency), "",
         "## Issue distribution over time (month request was created)", "", md_table(by_month), "",
         "## Reconciliation", "",
-        "Headline KPIs were computed independently in Python (`src/analytics/kpis.py`) and SQL "
-        "(`analytics.v_kpi_summary`) and matched: " +
-        ", ".join(f"{k} = {v[1]}" for k, v in checks.items()) + ".", ""]
+        "Each value below was computed independently in Python and in SQL and must match before this report is "
+        "written (the run fails otherwise):", "",
+        md_table(pd.DataFrame([{"check": k, "python": v[0], "sql": v[1], "tolerance": v[2]} for k, v in checks.items()])), ""]
     (config.ROOT / "reports" / "data_quality_report.md").write_text("\n".join(report), encoding="utf-8")
 
     # ---------- raw vs cleaned ----------
-    naive = naive_kpis(stg, target)
     rvc = f["raw_vs_clean"].drop(columns="ord")
-    # attribution: change in raw mean/median if only one rule's records were removed from the duration sample
+    excluding = {r["id"] for r in rules_cfg["rules"] if r.get("excludes_from_resolution")}
+    names = {r["id"]: r["name"] for r in rules_cfg["rules"]}
     dur = stg.assign(h=(stg["closed_at"] - stg["created_at"]).dt.total_seconds() / 3600).dropna(subset=["h"])
     attrib = []
-    for rule in ["DQ005", "DQ006", "DQ008", "DQ011", "DQ013"]:
+    for rule in sorted(set(issues["rule_id"])):
         hs = set(issues.loc[issues["rule_id"] == rule, "record_hash"])
+        n = int(dur["record_hash"].isin(hs).sum())
+        if not n:
+            continue
         kept = dur[~dur["record_hash"].isin(hs)]["h"]
-        attrib.append({"rule_id": rule, "records_in_raw_duration_sample": int(dur["record_hash"].isin(hs).sum()),
+        attrib.append({"rule_id": rule, "rule": names.get(rule, rule), "records_in_raw_duration_sample": n,
                        "avg_hours_if_removed": round(kept.mean(), 2), "median_hours_if_removed": round(kept.median(), 2),
-                       "applied_in_cleaning": rule != "DQ013"})
+                       "avg_change_vs_raw_hours": round(kept.mean() - dur["h"].mean(), 2),
+                       "removed_by_cleaning_policy": rule in excluding})
     attrib = pd.DataFrame(attrib)
-    attrib["avg_change_vs_raw_hours"] = (attrib["avg_hours_if_removed"] - dur["h"].mean()).round(2)
     neg = int((dur["h"] < 0).sum())
     ag = f["raw_vs_clean_agency"]
-    changed = ag[ag["avg_abs_diff"].abs() > 0]
+    changed = ag[(ag["avg_abs_diff"].abs() > 0) | (ag["median_pct_diff"].abs() > 0)]
     cmp_lines = [
         "# Raw vs Cleaned KPI Comparison", "",
         f"_Run `{run['run_id']}`; reporting date {run['reporting_date']}._", "",
-        "**Raw** = a report built directly on the extract: every row counts, and any row with a `closed_date` "
-        "contributes a duration (including negative durations and open requests that carry a closed date). "
-        "**Cleaned** = the documented treatment policy (docs/validation_framework.md). Formulas are identical; "
-        "only the record treatment differs.", "",
+        "**Raw** = a report built directly on the current source snapshot: every row counts, any non-Closed status "
+        "counts as open, and any row with a `closed_date` contributes a duration (negative durations and open "
+        "requests that carry a closed date included). **Cleaned** = the documented treatment policy "
+        "(docs/validation_framework.md). Formulas are identical; only record treatment and status grouping differ. "
+        "Rates are in percent; differences are computed from unrounded values and rounded only for display.", "",
         md_table(rvc), "",
         "## Explanation of observed changes", "",
-        ("* **Counts unchanged.** No duplicate IDs, exact duplicates, missing IDs or missing creation dates were "
-         "found, so nothing was deduplicated or quarantined; total, closed and open counts are identical."
-         if rvc.iloc[0]["abs_diff"] == 0 else
-         f"* **Counts changed by {rvc.iloc[0]['abs_diff']:,.0f}** through deduplication/quarantine (see audit summary)."),
-        f"* **Average resolution time {_fmt(rvc.iloc[4]['raw_value'], 'f')} → {_fmt(rvc.iloc[4]['clean_value'], 'f')} h.** "
-        f"Cleaning removed {neg} negative durations (DQ006) and the durations of open requests that carried a closed "
-        f"date (DQ011). Removing negatives raises the mean; removing DQ011 (mostly long-running DOB cases) lowers it; "
-        f"the net effect is small.",
-        f"* **Median {_fmt(rvc.iloc[5]['raw_value'], 'f')} → {_fmt(rvc.iloc[5]['clean_value'], 'f')} h.** "
-        f"Excluding negative values shifts the distribution up slightly.",
+        ("* **Counts unchanged.** Nothing was deduplicated or quarantined and no undocumented statuses were found, so "
+         "total, closed and open counts are identical."
+         if (rvc["abs_diff"].iloc[:3] == 0).all() else
+         "* **Counts changed** through deduplication, quarantine or undocumented statuses (see the audit summary)."),
+        f"* **Durations.** The raw sample contains {neg} negative durations; the policy removes every record whose rule "
+        f"has `excludes_from_resolution: true` ({', '.join(sorted(excluding))}). The attribution table shows the "
+        f"direction of each rule's effect.",
         f"* **Largest headline change: {rvc['pct_diff'].abs().max():.3f}%.** "
-        + ("At borough level the issues found here do not materially distort headline reporting; the impact is "
-           "concentrated in specific agencies (below)." if rvc["pct_diff"].abs().max() < 1 else
-           "Data treatment materially changes headline reporting."), "",
-        "## Agency-level impact (agencies whose average changed)", "", md_table(changed), "",
+        + ("Headline (Staten Island) reporting is not materially distorted; the impact is concentrated in specific "
+           "agencies (below)." if rvc["pct_diff"].abs().max() < 1 else "Data treatment materially changes headline reporting."), "",
+        "## Agency-level impact (agencies whose average or median changed)", "", md_table(changed), "",
         "## Attribution by rule (raw duration sample, one rule removed at a time)", "",
-        f"Raw sample: {len(dur):,} durations, mean {dur['h'].mean():.2f} h, median {dur['h'].median():.2f} h.", "",
+        f"Raw sample: {len(dur):,} durations, mean {dur['h'].mean():.2f} h, median {dur['h'].median():.2f} h. "
+        "Rules with `removed_by_cleaning_policy = False` are sensitivity checks only.", "",
         md_table(attrib), "",
-        "DQ013 (durations > 365 days) is **retained** by policy because long tree/sidewalk and building cases are "
-        "plausible; the row above is a sensitivity check showing how much the average depends on those cases.", "",
-        "## Cleaning treatment summary", "", md_table(f["cleaning_audit_summary"]), "",
-        "## Python cross-check of naive KPIs", "",
-        f"`naive_kpis()` gives total={naive['total_requests']:,}, avg={naive['avg_resolution_hours']:.2f} h, "
-        f"median={naive['median_resolution_hours']:.2f} h, matching the SQL raw column.", ""]
+        "## Cleaning treatment summary", "", md_table(f["cleaning_audit_summary"]), ""]
     (config.ROOT / "reports" / "kpi_comparison.md").write_text("\n".join(cmp_lines), encoding="utf-8")
 
-    metrics.update({"kpis_clean": {k: v for k, v in py.items()}, "kpis_raw": naive})
+    metrics.update({"kpis_clean": py, "kpis_raw": naive,
+                    "reconciliation": {k: {"python": v[0], "sql": v[1]} for k, v in checks.items()}})
     (config.ROOT / "reports" / "metrics.json").write_text(json.dumps(metrics, indent=2, default=str), encoding="utf-8")
     log.info("reports written: data_quality_report.md, kpi_comparison.md, metrics.json")
     return metrics

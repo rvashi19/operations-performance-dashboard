@@ -1,11 +1,16 @@
 # Data quality rule definitions consumed by src/validation/framework.py.
 # check: name of the check function; params: check-specific parameters.
-# treatment: deduplicate | normalize | retain | quarantine | exclude_from_resolution_metrics | manual_review
+# treatment: deduplicate | retain | quarantine | exclude_from_resolution_metrics | manual_review
+# excludes_from_resolution: true removes the record's duration from resolution-time metrics
+#   (it stays in volume counts). Read by src/transformation/cleaning.py; nothing is hardcoded there.
 reference:
   # Status values listed for this dataset (data dictionary + observed values). Used by DQ012.
   documented_statuses: [Assigned, Cancel, Closed, Draft, Email Sent, In Progress, Open, Pending, Started, Unassigned, Unspecified]
   closed_statuses: [Closed]
-  open_statuses: [Assigned, Draft, Email Sent, In Progress, Open, Pending, Started, Unassigned, Unspecified]
+  open_statuses: [Assigned, Draft, Email Sent, In Progress, Open, Pending, Started, Unassigned]
+  # Any status in neither list (including Cancel and Unspecified) is grouped as 'Unknown':
+  # counted in total volume, excluded from closed, open/backlog and resolution metrics.
+  source_timezone: America/New_York
 rules:
   - id: DQ001
     name: Duplicate request ID
@@ -46,6 +51,7 @@ rules:
     category: consistency
     severity: high
     treatment: exclude_from_resolution_metrics
+    excludes_from_resolution: true
     explanation: Status is Closed but closed_date is empty, so resolution time cannot be computed. Open requests without a closed date are NOT flagged.
   - id: DQ006
     name: Closed before created
@@ -54,6 +60,7 @@ rules:
     category: validity
     severity: high
     treatment: exclude_from_resolution_metrics
+    excludes_from_resolution: true
     explanation: closed_date precedes created_date, producing a negative duration.
   - id: DQ007
     name: Invalid timestamp
@@ -70,6 +77,7 @@ rules:
     category: validity
     severity: high
     treatment: exclude_from_resolution_metrics
+    excludes_from_resolution: true
     explanation: Timestamp is later than the extraction time. due_date is excluded because future deadlines are legitimate.
   - id: DQ009
     name: Missing complaint category
@@ -94,6 +102,7 @@ rules:
     category: consistency
     severity: medium
     treatment: manual_review
+    excludes_from_resolution: true
     explanation: Status indicates the request is unresolved but a closed_date is present (possible re-opened request). Counted as open; excluded from resolution metrics.
   - id: DQ012
     name: Undocumented status value
@@ -120,3 +129,11 @@ rules:
     severity: low
     treatment: retain
     explanation: No ZIP code and no coordinates; record kept, shown as 'Unknown' in geographic breakdowns.
+  - id: DQ015
+    name: Ambiguous or nonexistent local timestamp
+    check: dst_ambiguous
+    columns: [created_date, closed_date]
+    category: validity
+    severity: low
+    treatment: retain
+    explanation: Local timestamp falls in the repeated fall-back hour or the skipped spring-forward hour of the source timezone, so its true instant (and any duration using it) is uncertain by up to one hour.
